@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>障がい者雇用支援アプリ</title>
+    <link rel="manifest" href="/manifest.json?v=4" />
+    <meta name="description" content="農場での知的・発達・精神障がい者雇用を合理的配慮をベースにアドバイス＆支援する「障がい者雇用支援アプリ」です。農場長から就労スタッフへのより良いサポートを後押しします。" />
+    <meta name="theme-color" content="#f97316" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="障がい者雇用支援アプリ" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-180-v3.png" />
+    <script>
+      // Early capture of beforeinstallprompt to ensure no events are lost
+      window.deferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        window.dispatchEvent(new CustomEvent('pwa-prompt-available', { detail: e }));
+      });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"BIZ UDPGothic"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              orange: {
+                50: '#fff7ed',
+                100: '#ffedd5',
+                200: '#fed7aa',
+                300: '#fdba74',
+                400: '#fb923c',
+                500: '#f97316',
+                550: '#ea580c',
+                600: '#ea580c',
+                650: '#c2410c', // High contrast safety orange-700
+                700: '#c2410c',
+                750: '#9a3412', // Strong high contrast orange-800
+                800: '#9a3412',
+                850: '#7c2d12', // Deep safety orange-900
+                900: '#7c2d12',
+                950: '#431407',
+              },
+              gray: {
+                650: '#4b5563', // Valid gray-600
+                750: '#374151', // Valid gray-700
+                850: '#1f2937', // Valid gray-800
+                905: '#111827', // Valid gray-900
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Simple scrollbar styling for a cleaner look */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      /* Dark mode scrollbar */
+      @media (prefers-color-scheme: dark) {
+        ::-webkit-scrollbar-track {
+          background: #2d3748; /* dark gray */
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #718096; /* lighter gray */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #a0aec0; /* even lighter gray */
+        }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      /* High Contrast Dark Mode */
+      @media (prefers-color-scheme: dark) {
+        html.dark-high-contrast {
+          --hc-bg-primary: #0a0a0a;
+          --hc-bg-secondary: #1a1a1a;
+          --hc-bg-tertiary: #2a2a2a;
+          --hc-text-primary: #ffffff;
+          --hc-text-secondary: #e0e0e0;
+          --hc-text-muted: #b0b0b0;
+          --hc-border-primary: #444444;
+          --hc-accent-green-text: #6ee7b7;
+        }
+
+        html.dark-high-contrast body.dark\:bg-gray-900 {
+          background-color: var(--hc-bg-primary);
+        }
+        
+        html.dark-high-contrast .dark\:bg-gray-800,
+        html.dark-high-contrast .dark\:bg-gray-900 {
+          background-color: var(--hc-bg-secondary);
+        }
+        
+        html.dark-high-contrast .dark\:bg-gray-700 {
+           background-color: var(--hc-bg-tertiary);
+        }
+
+        html.dark-high-contrast .dark\:text-white,
+        html.dark-high-contrast .dark\:text-gray-100,
+        html.dark-high-contrast .dark\:text-gray-200 {
+          color: var(--hc-text-primary);
+        }
+        
+        html.dark-high-contrast .dark\:text-gray-300 {
+          color: var(--hc-text-secondary);
+        }
+        
+        html.dark-high-contrast .dark\:text-gray-400 {
+          color: var(--hc-text-muted);
+        }
+
+        html.dark-high-contrast .dark\:border-gray-600,
+        html.dark-high-contrast .dark\:border-gray-700 {
+          border-color: var(--hc-border-primary);
+        }
+        
+        html.dark-high-contrast .dark\:text-green-300,
+        html.dark-high-contrast .dark\:text-green-400 {
+          color: var(--hc-accent-green-text);
+        }
+      }
+    </style>
+
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-orange-50 dark:bg-gray-900 dark:text-white">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

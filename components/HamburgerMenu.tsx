@@ -1,0 +1,111 @@
+import React from 'react';
+import { CameraIcon, ToolsIcon, SettingsIcon, CloseIcon, LogoutIcon, CloudDownloadIcon, ShareIcon } from './Icons';
+
+export const HamburgerMenu: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  setPage: (page: string) => void;
+  activePage: string;
+  onLogout: () => void;
+  updateAvailable: boolean;
+  onUpdate: () => void;
+  onCheckForUpdate: () => void;
+  showToast: (message: string) => void;
+  onShareClick: () => void;
+}> = ({ isOpen, onClose, setPage, activePage, onLogout, updateAvailable, onUpdate, onCheckForUpdate, showToast, onShareClick }) => {
+  const menuItems = [
+    { name: 'PLANT_DIAGNOSIS', label: 'AI作物診断', icon: CameraIcon },
+    { name: 'TOOLS', label: 'ツール', icon: ToolsIcon },
+    { name: 'SETTINGS', label: '設定', icon: SettingsIcon },
+  ];
+
+  const handleNavigation = (page: string) => {
+    setPage(page);
+    onClose();
+  };
+  
+  const getActiveTab = (page: string) => {
+    if (['CALCULATOR', 'RECIPE_SEARCH', 'VEGETABLE_SEARCH', 'PEST_SEARCH', 'TERM_SEARCH', 'WEATHER', 'PLANTING_RECOMMENDATION_SEARCH'].includes(page)) return 'TOOLS';
+    if (menuItems.some(item => item.name === page)) return page;
+    return 'PLANT_DIAGNOSIS'; // Fallback
+  };
+  
+  const currentTab = getActiveTab(activePage);
+
+  const handleUpdateClick = () => {
+    if (updateAvailable) {
+      onUpdate();
+    } else {
+      onCheckForUpdate();
+      showToast("更新を確認しています...");
+    }
+    onClose();
+  };
+
+  const handleShareClick = () => {
+    onShareClick();
+    onClose();
+  };
+
+  return (
+    <div className={`fixed inset-0 z-40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
+      <div className={`absolute top-0 right-0 h-full w-72 bg-white dark:bg-gray-900 shadow-xl transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+          <h2 className="font-bold text-lg text-gray-800 dark:text-gray-200">メニュー</h2>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+            <CloseIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          </button>
+        </div>
+        <div className="p-2 flex flex-col justify-between" style={{ height: 'calc(100% - 65px)' }}>
+          <nav>
+            <ul>
+              {menuItems.map(item => {
+                const isActive = currentTab === item.name;
+                return (
+                  <li key={item.name}>
+                    <button
+                      onClick={() => handleNavigation(item.name)}
+                      className={`w-full flex items-center gap-4 p-4 rounded-lg text-left text-base transition-colors ${isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                    >
+                      <item.icon className={`h-6 w-6 ${isActive ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`} />
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+              <li>
+                <button
+                  onClick={handleShareClick}
+                  className="w-full flex items-center gap-4 p-4 rounded-lg text-left text-base transition-colors text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                >
+                  <ShareIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                  <span>このアプリを共有する</span>
+                </button>
+              </li>
+               <li>
+                <button
+                  onClick={handleUpdateClick}
+                  className={`w-full flex items-center gap-4 p-4 rounded-lg text-left text-base transition-colors relative ${updateAvailable ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-semibold' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                >
+                  <CloudDownloadIcon className={`h-6 w-6 ${updateAvailable ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`} />
+                  <span>{updateAvailable ? 'アップデートを適用' : 'アプリを更新'}</span>
+                  {updateAvailable && <span className="absolute top-3 right-3 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-gray-900"></span>}
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div className="p-2 border-t dark:border-gray-700 mt-2">
+            <button
+              onClick={onLogout}
+              className="w-full flex items-center gap-4 p-4 rounded-lg text-left text-base transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+            >
+              <LogoutIcon className="h-6 w-6 text-red-500 dark:text-red-400" />
+              <span>ログアウト</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

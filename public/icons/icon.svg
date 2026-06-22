@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Soft warm orange circle background -->
+  <rect width="200" height="200" rx="46" fill="#FFF4E6" />
+  
+  <g transform="translate(0, 10)">
+    <!-- Supporting Hands forming a heart shape with a warm cozy vibe -->
+    <path d="M100 135 C100 135, 60 95, 60 70 C60 48, 78 35, 100 60 C122 35, 140 48, 140 70 C140 95, 100 135, 100 135 Z" fill="#FFA94D" opacity="0.15" />
+    
+    <!-- Gentle supporter hand: Warm Orange -->
+    <path d="M50 120 C50 100, 70 85, 95 85 C105 85, 115 90, 115 105 C115 120, 95 135, 75 140 C60 144, 50 135, 50 120 Z" fill="#FF922B" opacity="0.85" />
+    
+    <!-- Supported staff hand: Soft Salmon/Amber -->
+    <path d="M150 120 C150 100, 130 85, 105 85 C95 85, 85 90, 85 105 C85 120, 105 135, 125 140 C140 144, 150 135, 150 120 Z" fill="#FAB005" opacity="0.85" />
+    
+    <!-- Heart outline accent indicating love/care/support -->
+    <path d="M100 115 C100 115, 80 95, 80 80 C80 68, 90 60, 100 72 C110 60, 120 68, 120 80 C120 95, 100 115, 100 115 Z" fill="#FF8787" />
+    
+    <!-- Smile lines under the heart for supportive / smiling friendly feel -->
+    <path d="M85 130 Q100 140 115 130" fill="none" stroke="#E67E22" stroke-width="4" stroke-linecap="round" />
+    
+    <!-- Starburst sparkles around showing progress and growth of the staffs -->
+    <path d="M45 45 C45 41, 48 41, 48 37 C48 41, 51 41, 51 45 C48 45, 48 49, 45 45 Z" fill="#FF922B" />
+    <path d="M155 45 C155 41, 158 41, 158 37 C158 41, 161 41, 161 45 C158 45, 158 49, 155 45 Z" fill="#FAB005" />
+  </g>
+</svg>

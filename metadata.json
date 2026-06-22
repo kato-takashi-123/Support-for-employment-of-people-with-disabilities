@@ -1,0 +1,11 @@
+{
+  "name": "障がい者雇用支援アプリ",
+  "description": "「障がい者雇用支援アプリ」は、障がい者雇用を行う農場の管理者（農場長）に合理的配慮や具体的なサポート方法をアドバイス、支援する頼れる専門支援ツールです。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

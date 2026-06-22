@@ -1,0 +1,40 @@
+{
+  "name": "障がい者雇用支援アプリ",
+  "short_name": "雇用支援アプリ",
+  "description": "「障がい者雇用支援アプリ」は、障がい者雇用を行う農場の管理者（農場長）に合理的配慮や具体的なサポート方法をアドバイス、支援する頼れる専門支援ツールです。",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#fffbf7",
+  "theme_color": "#f97316",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192-v3.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-v3.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512-v3.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}
