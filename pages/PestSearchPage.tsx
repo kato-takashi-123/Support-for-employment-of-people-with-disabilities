@@ -222,31 +222,6 @@ const PestSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
           )}
         </div>
 
-        {/* Legal Links */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700">
-            <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaisha/index.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between text-gray-950 dark:text-gray-100 hover:text-orange-700 transition-colors">
-              <div className="flex items-center gap-3">
-                <PestSearchIcon className="h-6 w-6 text-orange-700 flex-shrink-0" />
-                <h4 className="font-extrabold text-xs sm:text-sm leading-snug">厚生労働省 障がい者雇用対策ガイド</h4>
-              </div>
-              <ExternalLinkIcon className="h-4 w-4 text-orange-700 flex-shrink-0" />
-            </a>
-            <p className="text-xs text-gray-950 dark:text-gray-200 mt-2 pl-9 font-bold">助成金、雇用枠、合理的配慮の定義に関する国の全体的な公式案内を閲覧・確認できます。</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700">
-            <a href="https://www.jeed.go.jp/disability/employer/reasonable_accommodation.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between text-gray-950 dark:text-gray-100 hover:text-orange-700 transition-colors">
-              <div className="flex items-center gap-3">
-                <PestSearchIcon className="h-6 w-6 text-orange-700 flex-shrink-0" />
-                <h4 className="font-extrabold text-xs sm:text-sm leading-snug">JEED 合理的配慮事例マニュアル</h4>
-              </div>
-              <ExternalLinkIcon className="h-4 w-4 text-orange-700 flex-shrink-0" />
-            </a>
-            <p className="text-xs text-gray-950 dark:text-gray-200 mt-2 pl-9 font-bold">JEEDが蓄積した、特性や作業別（農業分野を含む）の具体的な合理的配慮マニュアルと事例集が手に入ります。</p>
-          </div>
-        </div>
-
         {isLoading && (
             <div className="flex items-center justify-center gap-4 text-center p-3 bg-gray-100 dark:bg-gray-700 rounded-xl">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-700"></div>

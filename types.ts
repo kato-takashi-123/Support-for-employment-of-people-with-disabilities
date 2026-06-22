@@ -170,6 +170,13 @@ export type AppSettings = {
   dailyQuoteTheme: string;
   searchMode: 'ai' | 'google';
   appUrl?: string;
+  legalRate2024?: number;
+  legalRate2026?: number;
+  levyAmount?: number;
+  adjustmentAmount?: number;
+  rewardAmount?: number;
+  lastLegalUpdateCheck?: string;
+  legalUpdateLog?: string;
 };
 
 export type ApiCallHandler = <T>(apiCall: () => Promise<T>) => Promise<T | undefined>;

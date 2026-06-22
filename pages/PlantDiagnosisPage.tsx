@@ -26,6 +26,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
   const [result, setResult] = useState<PlantDiagnosis | null>(null);
   const [inputMode, setInputMode] = useState<'camera' | 'gallery'>('camera');
   const [concernText, setConcernText] = useState('');
+  const [error, setError] = useState<string | null>(null);
   
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
@@ -81,12 +82,13 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
 
   const handleConsult = useCallback(async () => {
     if (!concernText.trim() && !imageBase64) {
-      alert("相談内容を入力するか、参考メモ画像を配置してください。");
+      setError("相談内容を入力するか、参考メモ画像を配置してください。");
       return;
     }
     stopDiagnoseRef.current = false;
     setIsLoading(true);
     setResult(null);
+    setError(null);
     try {
       let imagePart: { mimeType: string; data: string } | null = null;
       if (imageBase64) {
@@ -100,10 +102,10 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
       if (advice) {
         setResult(advice);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (!stopDiagnoseRef.current) {
-        alert("AIへの相談中にエラーが発生しました。時間を置いてやり直してください。");
+        setError(e?.message || "AIへの相談中にエラーが発生しました。インターネット接続やAPIキーの設定を確認して再度お試しください。");
       }
     } finally {
       setIsLoading(false);
@@ -178,7 +180,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
                 onClick={startListening}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs sm:text-sm font-extrabold transition-all ${
                   isListening 
-                  ? 'bg-red-650 text-white animate-pulse border-2 border-red-400 shadow-md' 
+                  ? 'bg-red-600 text-white animate-pulse border-2 border-red-400 shadow-md' 
                   : 'bg-orange-100 text-orange-950 hover:bg-orange-200 dark:bg-gray-650 dark:text-orange-200'
                 }`}
                 title="マイクに向かってお話しください"
@@ -263,14 +265,26 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
 
           {/* Action Trigger */}
           <button 
-            type="button"
-            onClick={handleConsult} 
-            disabled={isLoading || (!concernText.trim() && !imageBase64)} 
-            className="w-full bg-orange-700 hover:bg-orange-850 text-white font-extrabold py-3.5 px-4 rounded-xl disabled:bg-gray-300 disabled:text-gray-500 flex items-center justify-center gap-2 text-sm sm:text-base shadow-md transition-all"
-          >
-            <ObservationIcon className="h-6 w-6" />
-            <span>AIに支援アドバイスをもらう</span>
+              type="button"
+              onClick={handleConsult} 
+              disabled={isLoading || (!concernText.trim() && !imageBase64)} 
+              className="w-full bg-orange-700 hover:bg-orange-850 text-white font-extrabold py-3.5 px-4 rounded-xl disabled:bg-gray-300 disabled:text-gray-500 flex items-center justify-center gap-2 text-sm sm:text-base shadow-md transition-all animate-none active:scale-[0.99]"
+            >
+              <ObservationIcon className="h-6 w-6" />
+              <span>AIに支援アドバイスをもらう</span>
           </button>
+
+          {error && (
+            <div className="p-4 bg-red-50 dark:bg-red-950/30 text-red-950 dark:text-red-300 rounded-xl border-2 border-red-200 text-xs sm:text-sm font-bold space-y-2">
+              <p className="font-extrabold flex items-center gap-2">
+                <span>⚠️ エラーが発生しました</span>
+              </p>
+              <p className="leading-relaxed">{error}</p>
+              <p className="font-bold text-[11px] text-gray-800 dark:text-gray-300">
+                ※解決方法：APIキーが未設定、または無効である可能性があります。「設定」メニューから正しいGemini APIキーを入力して設定を保存してください。
+              </p>
+            </div>
+          )}
           
           {isLoading && (
             <div className="mt-2 flex items-center justify-center gap-4 text-center p-3 bg-gray-100 dark:bg-gray-700 rounded-xl">

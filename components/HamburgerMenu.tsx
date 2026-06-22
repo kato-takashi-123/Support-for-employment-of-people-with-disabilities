@@ -1,5 +1,5 @@
 import React from 'react';
-import { CameraIcon, ToolsIcon, SettingsIcon, CloseIcon, LogoutIcon, CloudDownloadIcon, ShareIcon } from './Icons';
+import { HomeIcon, ToolsIcon, SettingsIcon, CloseIcon, LogoutIcon, CloudDownloadIcon, ShareIcon } from './Icons';
 
 export const HamburgerMenu: React.FC<{
   isOpen: boolean;
@@ -14,7 +14,7 @@ export const HamburgerMenu: React.FC<{
   onShareClick: () => void;
 }> = ({ isOpen, onClose, setPage, activePage, onLogout, updateAvailable, onUpdate, onCheckForUpdate, showToast, onShareClick }) => {
   const menuItems = [
-    { name: 'PLANT_DIAGNOSIS', label: 'AI作物診断', icon: CameraIcon },
+    { name: 'PLANT_DIAGNOSIS', label: 'AI相談窓口', icon: HomeIcon },
     { name: 'TOOLS', label: 'ツール', icon: ToolsIcon },
     { name: 'SETTINGS', label: '設定', icon: SettingsIcon },
   ];
@@ -81,6 +81,21 @@ export const HamburgerMenu: React.FC<{
                 >
                   <ShareIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                   <span>このアプリを共有する</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    handleNavigation('SETTINGS');
+                    setTimeout(() => {
+                      const el = document.getElementById('legal-sync-card');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 150);
+                  }}
+                  className="w-full flex items-center gap-4 p-4 rounded-lg text-left text-base transition-colors text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 animate-fadeIn"
+                >
+                  <span className="text-lg pl-1 pr-1">⚖️</span>
+                  <span>法改正データ自動同期</span>
                 </button>
               </li>
                <li>

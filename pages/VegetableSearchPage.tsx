@@ -101,7 +101,7 @@ const VegetableSearchPage: React.FC = () => {
 
             {/* Step 2 */}
             <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-xl border-2 border-red-200 flex items-start gap-3">
-              <span className="w-8 h-8 bg-red-650 text-white text-base font-extrabold rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+              <span className="w-8 h-8 bg-red-600 text-white text-base font-extrabold rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
               <div>
                 <p className="font-extrabold text-sm sm:text-base text-red-950 dark:text-red-300 mb-1">② 意識・返答が怪しい場合</p>
                 <p className="text-sm sm:text-base text-red-900 dark:text-red-400 leading-relaxed font-extrabold bg-red-100 dark:bg-red-900/30 px-3 py-1.5 rounded-lg border border-red-200">
@@ -145,7 +145,7 @@ const VegetableSearchPage: React.FC = () => {
 
             {/* Step 1 */}
             <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border-2 border-red-200 flex items-start gap-3">
-              <span className="w-8 h-8 bg-red-650 text-white text-base font-extrabold rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+              <span className="w-8 h-8 bg-red-600 text-white text-base font-extrabold rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
               <div>
                 <p className="font-extrabold text-sm sm:text-base text-red-900 dark:text-red-400 mb-1">① 周囲の安全確認 ＆ 役割・応援要請</p>
                 <p className="text-sm sm:text-base text-gray-950 dark:text-gray-100 font-bold leading-relaxed">「誰か来てください！」「あなたは119番を、あなたはそこのAEDを持ってきてください！」と具体的に指差して指示します。</p>

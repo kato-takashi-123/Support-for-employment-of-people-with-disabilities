@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { AppSettings } from '../types';
+import { AppSettings, ApiCallHandler } from '../types';
 import { LogoutIcon, ExternalLinkIcon, CloudDownloadIcon } from '../components/Icons';
 import { SearchModeToggle } from '../components/common/SearchModeToggle';
 import { AiInfoModal } from '../components/modals';
+import { checkLegalUpdates } from '../services/geminiService';
 
 type SettingsPageProps = {
   settings: AppSettings;
@@ -11,6 +12,7 @@ type SettingsPageProps = {
   deferredPrompt: any;
   isAppInstalled: boolean;
   onInstallApp: () => void;
+  handleApiCall?: ApiCallHandler;
 };
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ 
@@ -19,12 +21,18 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   onLogout,
   deferredPrompt,
   isAppInstalled,
-  onInstallApp
+  onInstallApp,
+  handleApiCall
 }) => {
   const [isGeminiHelpOpen, setIsGeminiHelpOpen] = useState(false);
   const [guideTab, setGuideTab] = useState<'ios' | 'android'>('ios');
   const [installTypeTab, setInstallTypeTab] = useState<'pwa' | 'shortcut'>('pwa');
   
+  // 法改正同期関連のUI状態
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+
   const handlePartialSettingsChange = (newPartialSettings: Partial<AppSettings>) => {
     const newSettings = { ...settings, ...newPartialSettings };
 
@@ -38,6 +46,60 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     }
     
     onSettingsChange(newSettings);
+  };
+
+  const handleRunLegalVerification = async () => {
+    // API key checking / fallback behavior
+    if (!settings.enableAiFeatures || !settings.geminiApiKey) {
+      setSyncMessage("💡 APIキー未設定のため、厚生労働省（MHLW）公式の障害者雇用対策・法改正公告ページを新規タブで開きます。最新資料を直接ご参照ください。");
+      setTimeout(() => {
+        window.open("https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaisha/index.html", "_blank", "noopener,noreferrer");
+        setSyncMessage(null);
+      }, 3000);
+      return;
+    }
+
+    if (!handleApiCall) {
+      setSyncError("システムエラー：API呼び出しハンドラが利用できません。");
+      return;
+    }
+
+    setIsSyncing(true);
+    setSyncMessage("🔍 Google検証：厚生労働省の公開データベースおよび国会最新審議から法改正データをチェックしています。約10〜15秒お待ちください...");
+    setSyncError(null);
+
+    try {
+      // Execute legal checks with Google Search Grounding dynamically
+      const result = await handleApiCall(() => checkLegalUpdates({
+        legalRate2024: settings.legalRate2024 ?? 2.5,
+        legalRate2026: settings.legalRate2026 ?? 2.7,
+        levyAmount: settings.levyAmount ?? 50000,
+        adjustmentAmount: settings.adjustmentAmount ?? 29000,
+        rewardAmount: settings.rewardAmount ?? 21000,
+      }));
+
+      if (result) {
+        // Build settings upgrade payload
+        const upgrades: Partial<AppSettings> = {
+          legalRate2024: result.legalRate2024,
+          legalRate2026: result.legalRate2026,
+          levyAmount: result.levyAmount,
+          adjustmentAmount: result.adjustmentAmount,
+          rewardAmount: result.rewardAmount,
+          lastLegalUpdateCheck: new Date().toISOString(),
+          legalUpdateLog: result.changeLog,
+        };
+        handlePartialSettingsChange(upgrades);
+        setSyncMessage(`🎉 同期成功！最新の改正法データと算定比率をツールに反映しました。\n\n【調査要約】:\n${result.changeLog}`);
+      } else {
+        throw new Error("APIからデータを受信できませんでした。");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setSyncError(err?.message || "最新動向の検索接続テストに失敗しました。APIキーに余裕があるか、電波・通信環境をご確認ください。");
+    } finally {
+      setIsSyncing(false);
+    }
   };
   
   return (
@@ -142,7 +204,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 />
               </div>
 
-              <div>
+               <div>
                 <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300 mb-1">相談用推奨LLMモデル</label>
                 <select
                   value={settings.preferredModel || 'gemini-2.5-flash'}
@@ -153,6 +215,71 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                   <option value="gemini-2.5-pro">Gemini 2.5 Pro (超高精度合理的配慮分析重視)</option>
                 </select>
               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ⚖️ 法改正データの自動同期・アップデート */}
+      <div className="space-y-2" id="legal-sync-card">
+        <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">法律・算定基準アップデート</h3>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border-2 border-orange-200 dark:border-gray-700 shadow-md space-y-4">
+          <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-relaxed font-light">
+            「障害者雇用促進法」や「障害者虐待防止法」の改正チェックを自動的、または厚生労働省リンク経由で行います。改正があった際には新しい数値（法定率や金額）が本計算ツールや各解説項目にダイレクト反映されます。
+          </p>
+
+          <div className="p-3 bg-stone-50 dark:bg-gray-900/60 rounded-xl space-y-2 border border-orange-100/50 text-[11px] text-gray-800 dark:text-gray-200 font-bold">
+            <h4 className="text-xs text-orange-850 dark:text-orange-300 font-black">📊 現在アクティブな適用データ：</h4>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-xs pl-2">
+              <div>・2024年度雇用目標: <span className="text-orange-650 font-black">{(settings.legalRate2024 ?? 2.5).toFixed(1)}%</span></div>
+              <div>・2026年度雇用目標: <span className="text-orange-650 font-black">{(settings.legalRate2026 ?? 2.7).toFixed(1)}%</span></div>
+              <div>・不足ペナルティ: <span className="text-orange-650 font-black">{(settings.levyAmount ?? 50000).toLocaleString()}円/月</span></div>
+              <div>・超過調整金: <span className="text-orange-650 font-black">{(settings.adjustmentAmount ?? 29000).toLocaleString()}円/月</span></div>
+              <div>・中小企業報奨金: <span className="text-orange-650 font-black">{(settings.rewardAmount ?? 21000).toLocaleString()}円/月</span></div>
+            </div>
+            <div className="text-[10px] font-bold text-gray-400 border-t pt-1.5 mt-2">
+              📅 前回のAI自動検証日:{' '}
+              {settings.lastLegalUpdateCheck
+                ? new Date(settings.lastLegalUpdateCheck).toLocaleString()
+                : '初期セット済（未確認）'}
+            </div>
+          </div>
+
+          {/* Sync Button */}
+          <button
+            onClick={handleRunLegalVerification}
+            disabled={isSyncing}
+            className={`w-full py-3 px-4 text-white font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-xs select-none ${
+              isSyncing
+                ? 'bg-orange-300 dark:bg-orange-950/20 text-orange-100 cursor-not-allowed'
+                : 'bg-orange-650 hover:bg-orange-700 active:scale-98 dark:bg-orange-600'
+            }`}
+          >
+            {isSyncing ? (
+              <>
+                <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>接続・検証中...</span>
+              </>
+            ) : (
+              <>
+                <span>⚖️ 法改正を調査＆数値を同期する</span>
+              </>
+            )}
+          </button>
+
+          {/* Messaging/Console */}
+          {syncMessage && (
+            <div className="p-3 bg-blue-50/70 border border-blue-100 text-blue-900 rounded-xl text-[11px] leading-relaxed font-bold whitespace-pre-wrap animate-fadeIn">
+              {syncMessage}
+            </div>
+          )}
+
+          {syncError && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/25 dark:text-red-300 rounded-xl text-[11px] leading-relaxed font-bold animate-fadeIn">
+              ⚠️ {syncError}
             </div>
           )}
         </div>
@@ -245,7 +372,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
           {/* OS step guides */}
           <div className="border-t border-orange-100 pt-3.5 space-y-3">
-            <h4 className="text-xs font-bold text-gray-750">お使いの端末別の登録方法手順</h4>
+            <h4 className="text-xs font-bold text-gray-755">お使いの端末別の登録方法手順</h4>
             
             <div className="flex bg-orange-50/30 p-1 rounded-lg">
               <button
@@ -305,7 +432,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                     </p>
                     <div className="flex items-start gap-1.5">
                       <span className="w-4 h-4 bg-orange-100 text-orange-800 rounded font-bold flex items-center justify-center text-[9px] mt-0.5">1</span>
-                      <p>Chrome右上メニューの<strong>「３点リーダーアイコン（⋮）」</strong>をタップします。</p>
+                      <p>Chrome右上メニュー of <strong>「３点リーダーアイコン（⋮）」</strong>をタップします。</p>
                     </div>
                     <div className="flex items-start gap-1.5">
                       <span className="w-4 h-4 bg-orange-100 text-orange-800 rounded font-bold flex items-center justify-center text-[9px] mt-0.5">2</span>
@@ -355,7 +482,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
       <div className="pt-4">
          <button onClick={onLogout} className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 font-bold py-3 px-4 rounded-xl transition-colors border border-red-100 text-xs shadow-sm">
-            <LogoutIcon className="h-4.5 w-4.5"/>
             <span>システム・ログアウト</span>
           </button>
       </div>

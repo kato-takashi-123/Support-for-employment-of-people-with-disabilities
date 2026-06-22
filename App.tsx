@@ -13,6 +13,8 @@ import PestSearchPage from './pages/PestSearchPage';
 import TermSearchPage from './pages/TermSearchPage';
 import PlantDiagnosisPage from './pages/PlantDiagnosisPage';
 import PlantingRecommendationSearchPage from './pages/PlantingRecommendationSearchPage';
+import HandbookInfoPage from './pages/HandbookInfoPage';
+import EmploymentLawInfoPage from './pages/EmploymentLawInfoPage';
 import SettingsPage from './pages/SettingsPage';
 
 // Import components
@@ -23,7 +25,7 @@ import { ConfirmationModal, ConfirmationModalProps, ShareModal, AccessPermission
 import { ToolsIcon, CameraIcon, SettingsIcon, HomeIcon } from './components/Icons';
 
 export const App = () => {
-  const [page, setPage] = useState<'LOGIN' | 'TOOLS' | 'RECIPE_SEARCH' | 'VEGETABLE_SEARCH' | 'PEST_SEARCH' | 'TERM_SEARCH' | 'PLANT_DIAGNOSIS' | 'PLANTING_RECOMMENDATION_SEARCH' | 'SETTINGS'>('PLANT_DIAGNOSIS');
+  const [page, setPage] = useState<'LOGIN' | 'TOOLS' | 'RECIPE_SEARCH' | 'VEGETABLE_SEARCH' | 'PEST_SEARCH' | 'TERM_SEARCH' | 'PLANT_DIAGNOSIS' | 'PLANTING_RECOMMENDATION_SEARCH' | 'HANDBOOK_INFO' | 'EMPLOYMENT_LAW_INFO' | 'SETTINGS'>('PLANT_DIAGNOSIS');
   const [pageParams, setPageParams] = useState<any>({});
   const [settings, setSettings] = useState<AppSettings>(() => {
     const defaultSettings: AppSettings = {
@@ -37,13 +39,20 @@ export const App = () => {
       tenkiJpUrl: 'https://tenki.jp/forecast/3/16/4410/13101/3hours.html',
       dailyQuoteTheme: '思いやりと合理的配慮',
       searchMode: 'google',
-      appUrl: 'https://ai-crop-diagnosis1.vercel.app/',
+      appUrl: 'https://support-for-employment-of-people-wi.vercel.app/',
+      legalRate2024: 2.5,
+      legalRate2026: 2.7,
+      levyAmount: 50000,
+      adjustmentAmount: 29000,
+      rewardAmount: 21000,
+      lastLegalUpdateCheck: '',
+      legalUpdateLog: '初期バージョン（2024年の2.5％法定雇用率、2026年7月の2.7％改正、各新設特定短時間算定までカバーして動作しています）',
     };
     try {
       const backup = localStorage.getItem('settings_backup');
       if (backup) {
         const parsed = JSON.parse(backup);
-        parsed.appUrl = 'https://ai-crop-diagnosis1.vercel.app/';
+        parsed.appUrl = 'https://support-for-employment-of-people-wi.vercel.app/';
         return { ...defaultSettings, ...parsed };
       }
     } catch (e) {
@@ -178,7 +187,7 @@ export const App = () => {
           if (!savedSettings.tenkiJpUrl || savedSettings.tenkiJpUrl.trim() === '') {
             savedSettings.tenkiJpUrl = 'https://tenki.jp/forecast/5/26/5110/23100/3hours.html';
           }
-          savedSettings.appUrl = 'https://ai-crop-diagnosis1.vercel.app/';
+          savedSettings.appUrl = 'https://support-for-employment-of-people-wi.vercel.app/';
           setSettings(prev => ({ ...prev, ...savedSettings }));
           if (savedSettings.geminiApiKey) {
               updateGeminiApiKey(savedSettings.geminiApiKey);
@@ -212,7 +221,7 @@ export const App = () => {
       newSettings.tenkiJpUrl = 'https://tenki.jp/forecast/5/26/5110/23100/3hours.html';
     }
     // Always enforce the Vercel shared URL
-    newSettings.appUrl = 'https://ai-crop-diagnosis1.vercel.app/';
+    newSettings.appUrl = 'https://support-for-employment-of-people-wi.vercel.app/';
 
     if (newSettings.geminiApiKey !== settings.geminiApiKey) {
       updateGeminiApiKey(newSettings.geminiApiKey || '');
@@ -335,7 +344,7 @@ export const App = () => {
 
   const onBack = () => {
     let targetPage = 'PLANT_DIAGNOSIS';
-    if (['RECIPE_SEARCH', 'VEGETABLE_SEARCH', 'PEST_SEARCH', 'TERM_SEARCH', 'PLANTING_RECOMMENDATION_SEARCH'].includes(page)) {
+    if (['RECIPE_SEARCH', 'VEGETABLE_SEARCH', 'PEST_SEARCH', 'TERM_SEARCH', 'PLANTING_RECOMMENDATION_SEARCH', 'HANDBOOK_INFO', 'EMPLOYMENT_LAW_INFO'].includes(page)) {
       targetPage = 'TOOLS';
     }
     changePage(targetPage);
@@ -374,32 +383,34 @@ export const App = () => {
     TERM_SEARCH: { comp: <TermSearchPage settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} pageParams={pageParams} />, title: '障がい者福祉用語辞典', showBack: true },
     PLANT_DIAGNOSIS: { comp: <PlantDiagnosisPage setPage={changePage} settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} records={[]} pageParams={pageParams} />, title: '障がい者雇用支援アプリ', showBack: false },
     PLANTING_RECOMMENDATION_SEARCH: { comp: <PlantingRecommendationSearchPage />, title: '障がい特性・合理的配慮解説', showBack: true },
-    SETTINGS: { comp: <SettingsPage settings={settings} onSettingsChange={handleSettingsChange} onLogout={handleLogout} deferredPrompt={deferredPrompt} isAppInstalled={isAppInstalled} onInstallApp={handleInstallApp} />, title: '設定情報', showBack: false },
+    HANDBOOK_INFO: { comp: <HandbookInfoPage />, title: '手帳区分・重度判定解説', showBack: true },
+    EMPLOYMENT_LAW_INFO: { comp: <EmploymentLawInfoPage settings={settings} />, title: '障害者雇用促進法・計算解説', showBack: true },
+    SETTINGS: { comp: <SettingsPage settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} onLogout={handleLogout} deferredPrompt={deferredPrompt} isAppInstalled={isAppInstalled} onInstallApp={handleInstallApp} />, title: '設定', showBack: true }
   };
 
-  const currentPage = pages[page] || pages.PLANT_DIAGNOSIS;
+  const currentPage = pages[page] || pages['PLANT_DIAGNOSIS'];
 
   return (
-    <div className="bg-orange-50/10 dark:bg-gray-900 min-h-screen font-sans">
-      <PageHeader
-        title={currentPage.title}
+    <div className="min-h-screen bg-[#fdf5ed] dark:bg-gray-900 pb-12 flex flex-col justify-between">
+      <PageHeader 
+        title={currentPage.title} 
+        onMenuClick={() => setIsMenuOpen(true)} 
         onBack={currentPage.showBack ? onBack : undefined}
-        onMenuClick={() => setIsMenuOpen(true)}
       />
-      <main className="pb-24">
-        {isLoading ? <div className="text-center p-8">データを読み込み中...</div> : currentPage.comp}
+      <main className="flex-grow pt-2">
+        {currentPage.comp}
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 h-12 z-20">
-        <nav className="w-full h-full bg-[#fdf5ed] dark:bg-gray-800 shadow-t-lg border-t dark:border-gray-700 flex justify-around items-center">
-          <button onClick={() => changePage('TOOLS')} className={`flex flex-col items-center justify-center w-full h-full transition-colors ${['TOOLS', 'RECIPE_SEARCH', 'VEGETABLE_SEARCH', 'PEST_SEARCH', 'TERM_SEARCH', 'PLANTING_RECOMMENDATION_SEARCH'].includes(page) ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400'}`}>
+        <nav className="w-full h-full bg-[#D3FFCE] dark:bg-gray-800 shadow-t-lg border-t dark:border-gray-700 flex justify-around items-center">
+          <button onClick={() => changePage('TOOLS')} className={`flex flex-col items-center justify-center w-full h-full transition-colors ${['TOOLS', 'RECIPE_SEARCH', 'VEGETABLE_SEARCH', 'PEST_SEARCH', 'TERM_SEARCH', 'PLANTING_RECOMMENDATION_SEARCH'].includes(page) ? 'text-[#15803d] dark:text-[#22c55e]' : 'text-gray-500 dark:text-gray-400'}`}>
             <ToolsIcon className="h-5 w-5" />
             <span className="text-[10px] font-bold">ツール</span>
           </button>
           
           <div className="w-full h-full col-span-1"></div>
-
-          <button onClick={() => changePage('SETTINGS')} className={`flex flex-col items-center justify-center w-full h-full transition-colors ${page === 'SETTINGS' ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400'}`}>
+ 
+          <button onClick={() => changePage('SETTINGS')} className={`flex flex-col items-center justify-center w-full h-full transition-colors ${page === 'SETTINGS' ? 'text-[#15803d] dark:text-[#22c55e]' : 'text-gray-500 dark:text-gray-400'}`}>
             <SettingsIcon className="h-5 w-5" />
             <span className="text-[10px] font-bold">設定</span>
           </button>
@@ -407,9 +418,9 @@ export const App = () => {
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-30 flex justify-center items-end pointer-events-none" style={{ width: '20%'}}>
            <button
               onClick={() => changePage('PLANT_DIAGNOSIS')}
-              className={`w-14 h-14 bg-[#fdf5ed] dark:bg-gray-800 border-2 dark:border-gray-650 rounded-full shadow-lg flex items-center justify-center transition-transform pointer-events-auto ${activeTab === 'PLANT_DIAGNOSIS' ? 'text-orange-600 dark:text-orange-400 border-orange-500' : 'text-gray-600 dark:text-gray-400 border-stone-200 dark:border-gray-700'}`}
+              className={`w-14 h-14 bg-[#D3FFCE] dark:bg-gray-800 border-2 dark:border-gray-650 rounded-full shadow-lg flex items-center justify-center transition-transform pointer-events-auto ${activeTab === 'PLANT_DIAGNOSIS' ? 'text-[#15803d] dark:text-[#22c55e] border-[#15803d] dark:border-[#22c55e]' : 'text-gray-600 dark:text-gray-400 border-stone-200 dark:border-gray-700'}`}
               aria-label="音声相談窓口"
-          >
+           >
               <HomeIcon className="h-7 w-7" />
           </button>
         </div>

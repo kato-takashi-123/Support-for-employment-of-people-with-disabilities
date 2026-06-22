@@ -20,7 +20,12 @@ export class GeminiApiKeyError extends Error {
 
 const getAiClient = (): GoogleGenAI => {
   if (!ai) {
-    throw new GeminiApiKeyError('Gemini APIキーが設定されていません。設定ページでキーを入力してください。');
+    const envKey = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || (typeof process !== 'undefined' && process.env?.API_KEY);
+    if (envKey && envKey.trim()) {
+      ai = new GoogleGenAI({ apiKey: envKey.trim() });
+    } else {
+      throw new GeminiApiKeyError('Gemini APIキーが設定されていません。設定ページでキーを入力してください。');
+    }
   }
   return ai;
 };
@@ -153,7 +158,7 @@ export const searchGardeningTerm = async (query: string): Promise<AiSearchResult
   if (!query.trim()) return { text: "質問や検索ワードを入力してください。" };
 
   const config: any = {
-    systemInstruction: "あなたは障がい者福祉および雇用推進において、極めてわかりやすく支援制度や法規を伝える就労支援プランナーです。提示された用語について、素人である『農場長』に向けて説明してください。専門用語には丁寧な補足を付け、リストや丁寧な対比、あるいはアスキーアートなどの目立つレイアウトを用いて、直感的でわかりやすい解説にしてください。注意：本サービスはAIによる一般的な指標であり、具体的な利用方法や法解釈は自治体、福祉担当窓口、支援専門機関にご相談いただくよう、最下部で注意喚起してください。また、個人情報の入力は防ぐよう促してください。表記ルールを厳守（障害→『障がい』、指導員→『農場長』、障がい者本人→『就労スタッフ』）。",
+    systemInstruction: "あなたは障がい者福祉および雇用推進において、極めてわかりやすく支援制度や法規を伝える就労支援プランナーです。提示された用語について、素人である『農場長』に向けて説明してください。専門用語には丁寧な補足を付け、リストや丁寧な対比、あるいはアスキーアートなどの目立つレイアウトを用いて、直感的でわかりやすい解説にしてください。日本国内の信頼できる参照先として、厚生労働省（MHLW）の公式ウェブサイト（https://www.mhlw.go.jp/index.html）や、障害者雇用・合理的配慮・障がい福祉に関連する公式の指針・マニュアル、パンフレット類などの最新情報、リンク等をリファレンスとして紹介してください。また、本サービスはAIによる一般的な指標であり、具体的な利用方法や法解釈は国の出先機関であるハローワーク、都道府県労働局、または自治体や専門機関にご相談、確認いただくよう、最下部で注意喚起してください。個人情報の入力は防ぐよう促し、表記ルールを厳守（障害→『障がい』、指導員→『農場長』、障がい者本人→『就労スタッフ』）してください。",
     temperature: 0.5,
   };
   const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({
@@ -211,7 +216,7 @@ export const searchPestInfo = async (query: string, image?: { mimeType: string; 
   parts.push({ text: fullPrompt });
 
   const config: any = {
-      systemInstruction: "あなたは障がい者雇用における法律順守（コンプライアンス）の監査員でありアドバイザーです。障害者雇用促進法（合理的配慮義務、雇用率など）および障害者虐待防止法（身体・言葉による虐待、不承認など）について、一般の農場管理者である『農場長』に向けて明快かつ具体的に説明してください。罰則や規定義務だけでなく、いかに就労スタッフにとって安全な職場を作れるか、合理的配慮を実践できるかの実務的指針にしてください。「障害」については正式な法律用語（障害者雇用促進法、障害者虐待防止法など）以外はすべて「障がい」と表記してください。回答は指定されたJSONスキーマに従ってください。最下部には、必ず「AIの回答は法的な最終判断材料ではなく、必要に応じて都道府県労働局、ハローワーク、専門弁護士等の窓口に適宜相談してください」という旨の注意喚起、および個別スタッフの個別具体的な特性に合わせた対応の推奨を含めます。",
+      systemInstruction: "あなたは障がい者雇用における法律順守（コンプライアンス）の監査員でありアドバイザーです。障害者雇用促進法（合理的配慮義務、雇用率など）および障害者虐待防止法（身体・言葉による虐待、不承認など）について、一般の農場管理者である『農場長』に向けて明快かつ具体的に説明してください。罰則や規定義務だけでなく、いかに就労スタッフにとって安全な職場を作れるか、合理的配慮を実践できるかの実務的指針にしてください。解説にあたっては、日本国内の信頼できる参照先である厚生労働省の公式ホームページ（https://www.mhlw.go.jp/index.html）および関連リンク（障害者雇用の手引き、合理的配慮、虐待防止ガイドラインなど）をリファレンスとして具体的に示し、最新の各規定や公式の通知・パンフレットを参照するよう促してください。「障害」については正式な法律用語以外はすべて「障がい」と表記してください。回答は指定されたJSONスキーマに従ってください。最下部や詳細部分には、必ず「AIの回答は法的な最終判断材料ではなく、必要に応じて国の出先機関（厚生労働省・都道府県労働局、ハローワーク）や、専門弁護士、相談窓口に公式マニュアルを基にご相談ください」という旨の注意喚起、および個別対応の推奨を含めます。",
       temperature: 0.5,
       responseMimeType: "application/json",
       responseSchema: lawInfoSchema,
@@ -291,7 +296,8 @@ export const diagnosePlantHealth = async (image: { mimeType: string; data: strin
   const config = {
       systemInstruction: `あなたは農場などで働く知的障がい、発達障害、精神障害のある「就労スタッフ」への支援を行う最高の職場適応援助者（ジョブコーチ）です。
       専門家ではない「農場長（指導員）」に対して、合理的配慮をベースにした言葉がけ、見守りの頻度、作業指示の工夫、および物理的な環境調整についての具体的なアクションプランを提案します。
-      専門用語（例えば「シングルフォーカス」「視覚支援「感覚過敏「構造化」など）を使用する場合は、必ず素人にも理解しやすい言葉で「〜（これは特定のものに注目が向きすぎる状態です）」のように分かりやすい徹底解説を添え、箇条書きやフロー、顔文字や記号などを見やすく装飾した画面構成を念頭に置いてアドバイスを作成してください。
+      提案、アドバイスにおいては必要に応じて、厚生労働省（MHLW）の公式ホームページ（https://www.mhlw.go.jp/index.html）や、障害者就労支援・障害者雇用・合理的配慮の具体的な関連リンク等を参照用として紹介・案内してください。
+      専門用語（例えば「シングルフォーカス」「視覚支援」「感覚過敏」「構造化」など）を使用する場合は、必ず素人にも理解しやすい言葉で「〜（これは特定のものに注目が向きすぎる状態です）」のように分かりやすい徹底解説を添え、箇条書きやフロー、顔文字や記号などを見やすく装飾した画面構成を念頭に置いてアドバイスを作成してください。
       個人情報の保護のため、回答に特定の個人名や企業名を出さないでください。
       回答は指定されたJSONスキーマに従ってください。
       アドバイスはあくまでAIが生成した一般的な推奨事項・ガイドラインであり、最終的にはその就労スタッフ個人の特性やペースに耳を傾け、試行錯誤しながら合わせていく必要があることを必ず大きく強調・注意喚起してください。`,
@@ -330,4 +336,71 @@ export const extractTextFromImage = async (mimeType: string, data: string): Prom
 export const getPlantingRecommendations = async (months: number[], difficulty: 'low' | 'medium' | 'high', vegetableList: string[]): Promise<any> => {
   // We can leave this as dummy so compiling succeeds, but we will make PlantRecommendationSearchPage a fully offline, beautifully formatted characteristic tutorial layout.
   return [];
+};
+
+export interface LegalUpdateResult {
+  legalRate2024: number;
+  legalRate2026: number;
+  levyAmount: number;
+  adjustmentAmount: number;
+  rewardAmount: number;
+  hasUpdates: boolean;
+  changeLog: string;
+}
+
+/**
+ * 障害者雇用促進法・障害者虐待防止法の最新法改正をGoogle検索グラウンディングで調査・自動更新する
+ */
+export const checkLegalUpdates = async (currentSettings: {
+  legalRate2024: number;
+  legalRate2026: number;
+  levyAmount: number;
+  adjustmentAmount: number;
+  rewardAmount: number;
+}): Promise<LegalUpdateResult> => {
+  const schema = {
+    type: Type.OBJECT,
+    properties: {
+      legalRate2024: { type: Type.NUMBER, description: "障害者雇用率（2024年4月からの実効比率、基本は2.5）。最新の改正や特例で引き上げ等があればその新規数値を返します。" },
+      legalRate2026: { type: Type.NUMBER, description: "障害者雇用率（2026年7月からの改定公表方針、基本は2.7）。引き上げ延期や追加変更、または引き上げ時期の発表等があればその最新数値を返します。" },
+      levyAmount: { type: Type.NUMBER, description: "障害者雇用納付金（不足1人あたりの基準月額、基本は50000）。変更があればその数値を返します。" },
+      adjustmentAmount: { type: Type.NUMBER, description: "障害者雇用調整金（超過1人あたりの基準月額、基本は29000）。変更があればその数値を返します。" },
+      rewardAmount: { type: Type.NUMBER, description: "報奨金（常用雇用100人以下の企業向けの超過1人あたり月額、基本は21000）。変更があればその数値を返します。" },
+      hasUpdates: { type: Type.BOOLEAN, description: "国会・省令・厚生労働省の最新発表（2025年〜2026年・2027年以降）にて、前述基準からの変更、段階的引き上げスケジュールの確定、週10時間以上20時間未満の特定短時間割当要件の新発表、または障害者虐待防止法における重要改正・解釈基準の追加等があるかどうか。" },
+      changeLog: { type: Type.STRING, description: "検出された最新の改正情報やスケジュール、検討会動向、厚生労働省公式ソースに基づく解説文（300文字〜650文字程度。分かりやすく明快に）。最新の改正日や決定事項を日付入りで客観的にアドバイスしてください。" }
+    },
+    required: ["legalRate2024", "legalRate2026", "levyAmount", "adjustmentAmount", "rewardAmount", "hasUpdates", "changeLog"]
+  };
+
+  const client = getAiClient();
+  const today = new Date().toISOString().split("T")[0];
+
+  const response = await withRetry<GenerateContentResponse>(() => client.models.generateContent({
+    model: "gemini-3.5-flash",
+    contents: `本日（現在の日付：${today}）、日本国内における「障害者雇用促進法」（法定雇用率、納付金、調整金、報奨金額、除外率、特定短時間労働制度や週10時間〜20時間の超短時間算定要件など）および「障害者虐待防止法」（虐待防止措置責務、ハラスメント・虐待認定基準など）の改正情報についてWeb上から厚生労働省（MHLW）などの最新公示、および国会の審議、段階的スケジュールを調査してください。
+
+現在のアプリ設定値：
+- 2024年度法定雇用率基準: ${currentSettings.legalRate2024}%
+- 2026年7月以降法定雇用率基準: ${currentSettings.legalRate2026}%
+- 不足1人あたり雇用納付金基準: ${currentSettings.levyAmount}円
+- 超過1人あたり雇用調整金基準: ${currentSettings.adjustmentAmount}円
+- 超過1人あたり報奨金基準: ${currentSettings.rewardAmount}円
+
+厚生労働省の審議会や国会等で、上記基準をアップデートする新省令、特例新ルール、新罰則や特定業種除外率引き下げ方針、あるいは虐待防止研修の義務化拡大などの改正・ガイドライン新決定が告示されている場合は、hasUpdatesをtrueとし、その最新決定数値や内容を返してください。改正による金額や比率の数値更新が見つからない場合も、調査した最新状況や今後の施行スケジュール確約等の解説を実務的な視点で changeLog に丁寧に記述してください。`,
+    config: {
+      systemInstruction: "あなたは厚生労働省職業安定局の雇用開発企画課や、障がい者雇用推進本部に所属する法律スペシャリスト・コンプライアンス監査員です。厚生労働省（https://www.mhlw.go.jp/）などの最新の信頼できるプレスリリースや公式指針の記載内容をWeb検索でグラウンディング調査し、厳格かつ客観的な正しい改正情報（段階施行予定など）を分かりやすくレポート形式で回答してください。「障害者」という表現は、固有名詞（法律の正式名称やリンク等）を除き、一般表現としてはすべて「障がい者」と表記する表記ゆれルール、支援スタッフは「就労スタッフ」、農場指導者は「農場長」とする実務ルールを適用してください。",
+      temperature: 0.2,
+      responseMimeType: "application/json",
+      responseSchema: schema,
+      tools: [{ googleSearch: {} }]
+    }
+  }));
+
+  try {
+    const jsonText = response.text.trim();
+    return JSON.parse(jsonText) as LegalUpdateResult;
+  } catch (parseError) {
+    console.error("Failed to parse legal update JSON:", response.text, parseError);
+    throw new Error("AIから返却された改正データ形式が不正でした。");
+  }
 };
