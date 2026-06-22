@@ -461,6 +461,29 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">表示補助 (アクセシビリティ) 設定</h3>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-orange-100 dark:border-gray-700 shadow-sm space-y-4">
            <div>
+            <label className="block text-xs font-bold text-gray-750 dark:text-gray-300">カラーテーマ設定</label>
+            <div className="mt-2 flex rounded-lg shadow-sm">
+              <button
+                onClick={() => handlePartialSettingsChange({ themeMode: 'light' })}
+                className={`flex-1 px-4 py-2 text-[11px] rounded-l-lg transition-colors ${settings.themeMode === 'light' ? 'bg-orange-600 text-white font-bold hover:bg-orange-700' : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+              >
+                ☀️ ライト
+              </button>
+              <button
+                onClick={() => handlePartialSettingsChange({ themeMode: 'dark' })}
+                className={`flex-1 px-4 py-2 text-[11px] border-x border-orange-100 dark:border-gray-650 transition-colors ${settings.themeMode === 'dark' ? 'bg-orange-600 text-white font-bold hover:bg-orange-700' : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+              >
+                🌙 ダーク
+              </button>
+              <button
+                onClick={() => handlePartialSettingsChange({ themeMode: 'system' })}
+                className={`flex-1 px-4 py-2 text-[11px] rounded-r-lg transition-colors ${(settings.themeMode === 'system' || !settings.themeMode) ? 'bg-orange-600 text-white font-bold hover:bg-orange-700' : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+              >
+                💻 端末設定
+              </button>
+            </div>
+          </div>
+           <div>
             <label className="block text-xs font-bold text-gray-750 dark:text-gray-300">ダークモードのコントラスト強化</label>
             <div className="mt-2 flex rounded-lg shadow-sm">
               <button

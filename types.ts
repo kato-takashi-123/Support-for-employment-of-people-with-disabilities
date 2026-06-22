@@ -166,6 +166,7 @@ export type AppSettings = {
   enablePumiceWash: boolean;
   weatherLocation: string;
   darkModeContrast: 'normal' | 'high';
+  themeMode?: 'light' | 'dark' | 'system';
   tenkiJpUrl?: string;
   dailyQuoteTheme: string;
   searchMode: 'ai' | 'google';

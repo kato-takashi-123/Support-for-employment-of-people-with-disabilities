@@ -36,6 +36,7 @@ export const App = () => {
       enablePumiceWash: false,
       weatherLocation: 'tokyo,JP',
       darkModeContrast: 'normal',
+      themeMode: 'system',
       tenkiJpUrl: 'https://tenki.jp/forecast/3/16/4410/13101/3hours.html',
       dailyQuoteTheme: '思いやりと合理的配慮',
       searchMode: 'google',
@@ -260,6 +261,42 @@ export const App = () => {
     const root = document.documentElement;
     root.classList.toggle('dark-high-contrast', isHighContrast);
   }, [settings.darkModeContrast]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const mode = settings.themeMode || 'system';
+    
+    const applyTheme = (isDark: boolean) => {
+      root.classList.toggle('dark', isDark);
+    };
+
+    if (mode === 'dark') {
+      applyTheme(true);
+    } else if (mode === 'light') {
+      applyTheme(false);
+    } else {
+      // system mode
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      applyTheme(mediaQuery.matches);
+
+      const handleChange = (e: MediaQueryListEvent) => {
+        applyTheme(e.matches);
+      };
+      
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleChange);
+      } else {
+        mediaQuery.addListener(handleChange);
+      }
+      return () => {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handleChange);
+        } else {
+          mediaQuery.removeListener(handleChange);
+        }
+      };
+    }
+  }, [settings.themeMode]);
 
   useEffect(() => {
     // 1. If the index.html script already caught the install prompt, retrieve it.
