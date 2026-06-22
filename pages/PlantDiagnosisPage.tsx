@@ -20,6 +20,7 @@ type PageProps = {
 };
 
 const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) => {
+  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [ocrLoading, setOcrLoading] = useState(false);
@@ -144,7 +145,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams }) 
 
   return (
     <>
-      <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleCameraCapture} className="hidden" />
+      <input type="file" accept="image/*" capture={isIOS ? undefined : "environment"} ref={cameraInputRef} onChange={handleCameraCapture} className="hidden" />
       <input type="file" accept="image/*" ref={galleryInputRef} onChange={handleGallerySelect} className="hidden" />
       
       <div className="p-4 space-y-4 max-w-xl mx-auto pb-12">
