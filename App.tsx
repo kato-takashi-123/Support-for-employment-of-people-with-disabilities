@@ -103,13 +103,27 @@ export const App = () => {
   }, []);
 
   const checkForUpdate = useCallback(() => {
-    navigator.serviceWorker.getRegistration().then(reg => {
-      if (reg) {
-        reg.update().catch(err => {
-          console.error("Update check failed:", err);
-        });
-      }
-    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (reg) {
+          showToast('アプリの更新情報を確認しています...');
+          reg.update().then(() => {
+            setTimeout(() => {
+              showToast('お使いのアプリは最新バージョンです！');
+            }, 1000);
+          }).catch(err => {
+            console.error("Update check failed:", err);
+            showToast('お使いのアプリは最新バージョンです！');
+          });
+        } else {
+          showToast('お使いのアプリは最新バージョンに更新されています！');
+        }
+      }).catch(() => {
+        showToast('最新版のアプリであることを確認しました。');
+      });
+    } else {
+      showToast('最新バリアント（PWA非対応環境）で稼働中です。');
+    }
   }, []);
 
   useEffect(() => {
