@@ -105,27 +105,91 @@ export const App = () => {
 
   const checkForUpdate = useCallback(() => {
     if ('serviceWorker' in navigator) {
+      showToast('アプリの更新情報を確認しています...');
       navigator.serviceWorker.getRegistration().then(reg => {
         if (reg) {
-          showToast('アプリの更新情報を確認しています...');
           reg.update().then(() => {
-            setTimeout(() => {
-              showToast('お使いのアプリは最新バージョンです！');
-            }, 1000);
+            // Check if there is an active waiting worker or installing worker
+            const newWorker = reg.waiting || reg.installing;
+            if (newWorker) {
+              showToast('新しいバージョンを検知しました。更新を適用しています...');
+              waitingWorkerRef.current = newWorker;
+              setUpdateAvailable(true);
+              setTimeout(() => {
+                applyUpdate();
+              }, 1000);
+            } else {
+              // No pending service worker updates, but to guarantee all other elements,
+              // assets, CSS, and files are updated, we clear the client-side Cache Storage and reload.
+              if ('caches' in window) {
+                caches.keys().then(names => {
+                  return Promise.all(names.map(name => caches.delete(name)));
+                }).then(() => {
+                  showToast('最新の要素を読み込んでいます...');
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1200);
+                }).catch(() => {
+                  window.location.reload();
+                });
+              } else {
+                window.location.reload();
+              }
+            }
           }).catch(err => {
             console.error("Update check failed:", err);
-            showToast('お使いのアプリは最新バージョンです！');
+            // Fallback clear cache and reload
+            if ('caches' in window) {
+              caches.keys().then(names => {
+                return Promise.all(names.map(name => caches.delete(name)));
+              }).then(() => {
+                window.location.reload();
+              }).catch(() => {
+                window.location.reload();
+              });
+            } else {
+              window.location.reload();
+            }
           });
         } else {
-          showToast('お使いのアプリは最新バージョンに更新されています！');
+          // No service worker registration found, do a hard cache clear & reload
+          if ('caches' in window) {
+            caches.keys().then(names => {
+              return Promise.all(names.map(name => caches.delete(name)));
+            }).then(() => {
+              showToast('キャッシュをクリアして再起動しています...');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1200);
+            }).catch(() => {
+              window.location.reload();
+            });
+          } else {
+            window.location.reload();
+          }
         }
-      }).catch(() => {
-        showToast('最新版のアプリであることを確認しました。');
+      }).catch(err => {
+        console.error("Failed to get registration:", err);
+        window.location.reload();
       });
     } else {
-      showToast('最新バリアント（PWA非対応環境）で稼働中です。');
+      // Non-PWA browser context, perform standard Cache API cleanup & reload
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          return Promise.all(names.map(name => caches.delete(name)));
+        }).then(() => {
+          showToast('最新データを取得中...');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1200);
+        }).catch(() => {
+          window.location.reload();
+        });
+      } else {
+        window.location.reload();
+      }
     }
-  }, []);
+  }, [applyUpdate]);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {

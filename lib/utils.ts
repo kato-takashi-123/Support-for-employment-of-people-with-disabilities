@@ -53,6 +53,7 @@ export const resizeImage = (file: File, maxPixels: number): Promise<string> => {
 
         if (currentPixels <= maxPixels) {
           resolve(event.target?.result as string);
+          img.src = '';
           return;
         }
 
@@ -65,18 +66,74 @@ export const resizeImage = (file: File, maxPixels: number): Promise<string> => {
         canvas.height = newHeight;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
+          img.src = '';
           return reject(new Error('Could not get canvas context'));
         }
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.85); 
+        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.80); 
+        
+        // 明示的なメモリ解放
+        canvas.width = 1;
+        canvas.height = 1;
+        img.src = '';
+
         resolve(resizedBase64);
       };
-      img.onerror = reject;
+      img.onerror = (err) => {
+        img.src = '';
+        reject(err);
+      };
       img.src = event.target?.result as string;
     };
     reader.onerror = reject;
     reader.readAsDataURL(file);
+  });
+};
+
+export const createThumbnail = (base64Str: string, maxWidth = 160, maxHeight = 160): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        img.src = '';
+        resolve(base64Str);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      const thumb = canvas.toDataURL('image/jpeg', 0.55); // 高圧縮率で極限まで軽量化
+      
+      // 明示的なメモリ解放
+      canvas.width = 1;
+      canvas.height = 1;
+      img.src = '';
+      
+      resolve(thumb);
+    };
+    img.onerror = () => {
+      img.src = '';
+      resolve(base64Str);
+    };
+    img.src = base64Str;
   });
 };
 

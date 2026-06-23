@@ -28,7 +28,11 @@ const PestSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
   const [isCopied, setIsCopied] = useState(false);
   const stopSearchRef = useRef(false);
   
-  const { isListening, startListening } = useVoiceRecognition({ onResult: setQuery });
+  const { isListening, startListening } = useVoiceRecognition({
+    onResult: (text: string) => {
+      setQuery(prev => prev + (prev ? ' ' : '') + text);
+    }
+  });
 
   const handleImageSelected = async (file: File | null, autoSearch: boolean) => {
     if (!file) return;

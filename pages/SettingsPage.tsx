@@ -458,6 +458,32 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       </div>
 
       <div className="space-y-2">
+        <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">カレンダー設定</h3>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-orange-100 dark:border-gray-700 shadow-sm space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-750 dark:text-gray-300">週の開始曜日</label>
+            <p className="text-[10px] text-gray-400 mt-1">履歴カレンダーの開始曜日を設定します。</p>
+            <div className="mt-2 flex rounded-lg shadow-sm">
+              <button
+                type="button"
+                onClick={() => handlePartialSettingsChange({ startOfWeek: 'monday' })}
+                className={`flex-1 px-4 py-2 text-xs rounded-l-lg transition-colors ${settings.startOfWeek === 'monday' || !settings.startOfWeek ? 'bg-orange-600 text-white font-bold hover:bg-orange-700' : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+              >
+                📅 月曜日始まり
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePartialSettingsChange({ startOfWeek: 'sunday' })}
+                className={`flex-1 px-4 py-2 text-xs rounded-r-lg transition-colors ${settings.startOfWeek === 'sunday' ? 'bg-orange-600 text-white font-bold hover:bg-orange-700' : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+              >
+                📅 日曜日始まり
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
         <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">表示補助 (アクセシビリティ) 設定</h3>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-orange-100 dark:border-gray-700 shadow-sm space-y-4">
            <div>

@@ -30,7 +30,11 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
   const [result, setResult] = useState<AiSearchResult | null>(null);
   const stopSearchRef = useRef(false);
 
-  const { isListening, startListening } = useVoiceRecognition({ onResult: setQuery });
+  const { isListening, startListening } = useVoiceRecognition({
+    onResult: (text: string) => {
+      setQuery(prev => prev + (prev ? ' ' : '') + text);
+    }
+  });
   
   const handleStopSearch = () => {
     stopSearchRef.current = true;
