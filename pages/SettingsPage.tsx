@@ -233,12 +233,32 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
           <div className="p-3 bg-stone-50 dark:bg-gray-900/60 rounded-xl space-y-2 border border-orange-100/50 text-[11px] text-gray-800 dark:text-gray-200 font-bold">
             <h4 className="text-xs text-orange-850 dark:text-orange-300 font-black">📊 現在アクティブな適用データ：</h4>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-xs pl-2">
-              <div>・2024年度雇用目標: <span className="text-orange-650 font-black">{(settings.legalRate2024 ?? 2.5).toFixed(1)}%</span></div>
-              <div>・2026年度雇用目標: <span className="text-orange-650 font-black">{(settings.legalRate2026 ?? 2.7).toFixed(1)}%</span></div>
-              <div>・不足ペナルティ: <span className="text-orange-650 font-black">{(settings.levyAmount ?? 50000).toLocaleString()}円/月</span></div>
-              <div>・超過調整金: <span className="text-orange-650 font-black">{(settings.adjustmentAmount ?? 29000).toLocaleString()}円/月</span></div>
-              <div>・中小企業報奨金: <span className="text-orange-650 font-black">{(settings.rewardAmount ?? 21000).toLocaleString()}円/月</span></div>
+            <div className="grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-2 sm:gap-y-1 font-mono text-[11px] sm:text-xs pl-1 sm:pl-2">
+              <div>
+                ・現在の雇用率目標:
+                <br className="sm:hidden" />
+                <span className="text-orange-650 font-black pl-[3ch] sm:pl-1 inline-block">{(settings.legalRate2024 ?? 2.5).toFixed(1)}%</span>
+              </div>
+              <div>
+                ・2026年7月以降の目標:
+                <br className="sm:hidden" />
+                <span className="text-orange-650 font-black pl-[3ch] sm:pl-1 inline-block">{(settings.legalRate2026 ?? 2.7).toFixed(1)}%</span>
+              </div>
+              <div>
+                ・不足ペナルティ:
+                <br className="sm:hidden" />
+                <span className="text-orange-650 font-black pl-[3ch] sm:pl-1 inline-block">{(settings.levyAmount ?? 50000).toLocaleString()}円</span>
+              </div>
+              <div>
+                ・超過調整金:
+                <br className="sm:hidden" />
+                <span className="text-orange-650 font-black pl-[3ch] sm:pl-1 inline-block">{(settings.adjustmentAmount ?? 29000).toLocaleString()}円</span>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                ・中小企業報奨金:
+                <br className="sm:hidden" />
+                <span className="text-orange-650 font-black pl-[3ch] sm:pl-1 inline-block">{(settings.rewardAmount ?? 21000).toLocaleString()}円</span>
+              </div>
             </div>
             <div className="text-[10px] font-bold text-gray-400 border-t pt-1.5 mt-2">
               📅 前回のAI自動検証日:{' '}
