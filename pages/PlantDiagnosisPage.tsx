@@ -211,6 +211,13 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
     setSelectedHistoryDate(null);
   };
 
+  const resetToToday = () => {
+    const today = new Date();
+    setCalYear(today.getFullYear());
+    setCalMonth(today.getMonth());
+    setSelectedHistoryDate(getLocalDateString(today));
+  };
+
   const getHistoryCountForDay = (day: number) => {
     const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     return historyList.filter(item => item.date === dateStr).length;
@@ -469,7 +476,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                   <div className="space-y-3">
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <LeafIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <LeafIcon className="h-full w-full" />
+                        </div>
                         <span>サポート推奨レベル・緊迫度</span>
                       </h5>
                       <p className="text-xs text-gray-700 dark:text-gray-300 font-bold">{item.answer.overallHealth}</p>
@@ -477,7 +486,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <PestControlIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <PestControlIcon className="h-full w-full" />
+                        </div>
                         <span>障がい特性から見た状況分析</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -487,7 +498,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WateringIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <WateringIcon className="h-full w-full" />
+                        </div>
                         <span>合理的配慮に基づく具体的指示と工夫</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -497,7 +510,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <FertilizingIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <FertilizingIcon className="h-full w-full" />
+                        </div>
                         <span>農場長の心構えと対話のアドバイス</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -507,7 +522,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WeatherIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <WeatherIcon className="h-full w-full" />
+                        </div>
                         <span>支援指示・対話のバランス状態 ({item.answer.watering.status})</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -517,7 +534,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
                     <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WeatherIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
+                        <div className="h-5 w-5 flex-shrink-0 text-orange-700 flex items-center justify-center">
+                          <WeatherIcon className="h-full w-full" />
+                        </div>
                         <span>働く作業環境の物理的調整・配慮</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -574,11 +593,6 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
             }`}
           >
             <span>📅 過去の相談履歴</span>
-            {historyList.length > 0 && (
-              <span className="bg-orange-100 text-orange-850 px-2 py-0.5 rounded-full text-[10px] font-black border border-orange-350">
-                {historyList.length}
-              </span>
-            )}
           </button>
         </div>
 
@@ -846,9 +860,18 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                   >
                     <ChevronLeftIcon className="h-5 w-5" />
                   </button>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-gray-900 dark:text-gray-100">
-                    📅 {calYear}年 {calMonth + 1}月
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xs sm:text-sm font-extrabold text-gray-900 dark:text-gray-100">
+                      📅 {calYear}年 {calMonth + 1}月
+                    </h3>
+                    <button
+                      onClick={resetToToday}
+                      className="text-[10px] font-black text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50 px-2 py-0.5 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-all active:scale-[0.95]"
+                      type="button"
+                    >
+                      今日
+                    </button>
+                  </div>
                   <button 
                     onClick={nextMonth}
                     className="p-1.5 hover:bg-orange-100 dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 font-black"
