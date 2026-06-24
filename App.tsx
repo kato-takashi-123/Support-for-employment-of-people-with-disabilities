@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AppSettings, ApiCallHandler } from './types';
-import { updateGeminiApiKey } from './services/geminiService';
+import { updateGeminiApiKey, updateGeminiModel } from './services/geminiService';
 import { SETTINGS_KEY, SETTINGS_OBJECT_STORE_NAME } from './lib/constants';
 import { idbGet, idbSet } from './lib/indexedDB';
 
@@ -48,6 +48,7 @@ export const App = () => {
       rewardAmount: 21000,
       lastLegalUpdateCheck: '',
       legalUpdateLog: '初期バージョン（2024年の2.5％法定雇用率、2026年7月の2.7％改正、各新設特定短時間算定までカバーして動作しています）',
+      geminiModel: 'gemini-3.1-flash-lite',
     };
     try {
       const backup = localStorage.getItem('settings_backup');
@@ -271,6 +272,12 @@ export const App = () => {
           if (savedSettings.geminiApiKey) {
               updateGeminiApiKey(savedSettings.geminiApiKey);
           }
+          if (savedSettings.geminiModel) {
+              updateGeminiModel(savedSettings.geminiModel);
+          } else {
+              savedSettings.geminiModel = 'gemini-3.1-flash-lite';
+              updateGeminiModel('gemini-3.1-flash-lite');
+          }
           
           // Keep localStorage backup perfectly in sync
           try {
@@ -304,6 +311,9 @@ export const App = () => {
 
     if (newSettings.geminiApiKey !== settings.geminiApiKey) {
       updateGeminiApiKey(newSettings.geminiApiKey || '');
+    }
+    if (newSettings.geminiModel !== settings.geminiModel) {
+      updateGeminiModel(newSettings.geminiModel || 'gemini-3.5-flash');
     }
     setSettings(newSettings);
     

@@ -207,13 +207,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                <div>
                 <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300 mb-1">相談用推奨LLMモデル</label>
                 <select
-                  value={settings.preferredModel || 'gemini-2.5-flash'}
-                  onChange={(e) => handlePartialSettingsChange({ preferredModel: e.target.value })}
+                  value={settings.geminiModel || 'gemini-3.1-flash-lite'}
+                  onChange={(e) => handlePartialSettingsChange({ geminiModel: e.target.value as any })}
                   className="w-full text-xs p-2.5 border border-orange-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-850 dark:text-gray-100 focus:outline-orange-400 bg-none"
                 >
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash (超高速レスポンス・推奨)</option>
-                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (超高精度合理的配慮分析重視)</option>
+                  <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite (標準・超軽量・無料枠でも制限に達しにくい【推奨】)</option>
+                  <option value="gemini-3.5-flash">Gemini 3.5 Flash (上位モデル・より高度で詳細な合理的配慮の分析用)</option>
                 </select>
+                <p className="text-[10px] text-gray-400 mt-1 leading-normal">
+                  💡 **Gemini 3.1 Flash-Lite** は非常に高速で、1分あたりのリクエスト上限（レートリミット）に達しにくいため、日常的な相談や検索に最適です。より専門的な法的分析を行いたい場合は **Gemini 3.5 Flash** に切り替えてご活用ください。
+                </p>
               </div>
             </div>
           )}

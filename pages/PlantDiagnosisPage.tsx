@@ -244,24 +244,34 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
   const handleImageSelected = async (file: File | null) => {
     if (!file) return;
     setImageBase64(null);
-    setOcrLoading(true);
     try {
         // スマホのメモリ不足（クラッシュ）を強力に防止し、通信時間を極限まで短縮するため、
         // 30万画素（約640x480相当）に制限します。これにより転送サイズが95%以上削減され爆速になります。
         const resized = await resizeImage(file, 300000);
         setImageBase64(resized);
-        
-        // Automate Memo OCR transcription to help the user
-        const mimeType = resized.match(/data:(.*);/)?.[1] || 'image/jpeg';
-        const data = resized.split(',')[1];
+    } catch(e) {
+        console.error("Image resize failed", e);
+        alert("画像の読み取りに失敗しました。スマホの電波状態の良い場所で、もう一度やり直してください。");
+    }
+  };
+
+  // Explicit manual trigger for OCR to save precious API quota
+  const handleRunOcr = async () => {
+    if (!imageBase64) return;
+    setOcrLoading(true);
+    try {
+        const mimeType = imageBase64.match(/data:(.*);/)?.[1] || 'image/jpeg';
+        const data = imageBase64.split(',')[1];
         
         const text = await handleApiCall(() => extractTextFromImage(mimeType, data));
         if (text && text !== "テキストが見つかりませんでした") {
           setConcernText(prev => prev + (prev ? '\n' : '') + `【画像内メモの読み取り】:\n${text}`);
+        } else {
+          alert("画像からテキストが検出されませんでした。");
         }
-    } catch(e) {
-        console.error("Image resize or OCR failed", e);
-        alert("画像の読み取り、または手書き文字起こしに失敗しました。スマホの電波状態の良い場所で、もう一度やり直してください。");
+    } catch(e: any) {
+        console.error("OCR failed", e);
+        alert(e?.message || "手書き文字起こしに失敗しました。APIの上限、またはネットワーク接続を確認してください。");
     } finally {
         setOcrLoading(false);
     }
@@ -671,6 +681,17 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                     </div>
                   )}
                 </div>
+                {imageBase64 && !ocrLoading && (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={handleRunOcr}
+                      className="text-xs font-extrabold bg-orange-50 hover:bg-orange-100 dark:bg-gray-750 text-orange-950 dark:text-orange-200 px-3 py-2 rounded-lg border border-orange-250 dark:border-gray-650 flex items-center gap-1.5 transition-colors shadow-sm"
+                    >
+                      📝 画像から文字を自動書き起こし（任意）
+                    </button>
+                  </div>
+                )}
                 {ocrLoading && (
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-orange-700 dark:text-orange-400 font-extrabold animate-pulse justify-center">
                     <span>🔍 画像の文字起こし（OCR解析中）...</span>

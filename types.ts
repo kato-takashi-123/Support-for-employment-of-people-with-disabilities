@@ -178,6 +178,7 @@ export type AppSettings = {
   rewardAmount?: number;
   lastLegalUpdateCheck?: string;
   legalUpdateLog?: string;
+  geminiModel?: 'gemini-3.5-flash' | 'gemini-3.1-flash-lite';
 };
 
 export type ApiCallHandler = <T>(apiCall: () => Promise<T>) => Promise<T | undefined>;

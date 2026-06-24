@@ -2,12 +2,19 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { PestInfo, AppSettings, PlantDiagnosis } from '../types';
 
 let ai: GoogleGenAI | null = null;
+let activeModel: 'gemini-3.5-flash' | 'gemini-3.1-flash-lite' = 'gemini-3.1-flash-lite';
 
 export const updateGeminiApiKey = (apiKey: string) => {
   if (apiKey && apiKey.trim()) {
     ai = new GoogleGenAI({ apiKey });
   } else {
     ai = null;
+  }
+};
+
+export const updateGeminiModel = (model: 'gemini-3.5-flash' | 'gemini-3.1-flash-lite') => {
+  if (model === 'gemini-3.5-flash' || model === 'gemini-3.1-flash-lite') {
+    activeModel = model;
   }
 };
 
@@ -128,7 +135,7 @@ export const getDailyQuote = async (theme: string, forceRefresh = false): Promis
   }
 
   const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({
-    model: 'gemini-3.5-flash',
+    model: activeModel,
     contents: promptDetails,
     config: {
       systemInstruction: "あなたは障がい者雇用の現場支援を行うハートフルな就労支援専門員です。農場の指導員（農場長）に向けて、前向きで、合理的配慮を実践したくなるような「今日の心がけ」を1文、50文字前後で回答してください。笑顔、焦らない、寄り添う気持ちなどを大切にした具体的なコミュニケーションのアドバイスが好ましいです。個人情報は絶対に考慮・入力させない旨の注意喚起も念頭に入れてください。障害ではなく『障がい』、スタッフは『就労スタッフ』、指導者は『農場長』と表記します。",
@@ -162,7 +169,7 @@ export const searchGardeningTerm = async (query: string): Promise<AiSearchResult
     temperature: 0.5,
   };
   const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({
-    model: 'gemini-3.5-flash',
+    model: activeModel,
     contents: `障がい者福祉・雇用における「${query}」という用語について、イラストや丁寧な図解調を交えて解説してください。`,
     config,
   }));
@@ -216,13 +223,13 @@ export const searchPestInfo = async (query: string, image?: { mimeType: string; 
   parts.push({ text: fullPrompt });
 
   const config: any = {
-      systemInstruction: "あなたは障がい者雇用における法律順守（コンプライアンス）の監査員でありアドバイザーです。障害者雇用促進法（合理的配慮義務、雇用率など）および障害者虐待防止法（身体・言葉による虐待、不承認など）について、一般の農場管理者である『農場長』に向けて明快かつ具体的に説明してください。罰則や規定義務だけでなく、いかに就労スタッフにとって安全な職場を作れるか、合理的配慮を実践できるかの実務的指針にしてください。解説にあたっては、日本国内の信頼できる参照先である厚生労働省の公式ホームページ（https://www.mhlw.go.jp/index.html）および関連リンク（障害者雇用の手引き、合理的配慮、虐待防止ガイドラインなど）をリファレンスとして具体的に示し、最新の各規定や公式の通知・パンフレットを参照するよう促してください。「障害」については正式な法律用語以外はすべて「障がい」と表記してください。回答は指定されたJSONスキーマに従ってください。最下部や詳細部分には、必ず「AIの回答は法的な最終判断材料ではなく、必要に応じて国の出先機関（厚生労働省・都道府県労働局、ハローワーク）や、専門弁護士、相談窓口に公式マニュアルを基にご相談ください」という旨の注意喚起、および個別対応の推奨を含めます。",
+      systemInstruction: "あなたは障がい者雇用における法律順守（コンプライアンス）の監査員でありアドバイザーです。障害者雇用促進法（合理的配慮義務、雇用率など）および障害者虐待防止法（身体・言葉による虐待、不承認など）について、一般の農場管理者である『農場長』に向けて明快かつ具体的に説明してください。罰則や規定義務だけでなく、いかに就労スタッフにとって安全な職場を作れるか、合理的配慮を実践できるかの実務的指針にしてください。解説にあたっては、日本国内の信頼できる参照先である厚生労働省の公式ホームページ（https://www.mhlw.go.jp/index.html）および関連リンク（障害者雇用の手引き、合理的配慮、虐待防止ガイドラインなど）をリファレンスとして具体的に示し、最新の各規定や公式 of 通知・パンフレットを参照するよう促してください。「障害」については正式な法律用語以外はすべて「障がい」と表記してください。回答は指定されたJSONスキーマに従ってください。最下部や詳細部分には、必ず「AIの回答は法的な最終判断材料ではなく、必要に応じて国の出先機関（厚生労働省・都道府県労働局、ハローワーク）や、専門弁護士、相談窓口に公式マニュアルを基にご相談ください」という旨の注意喚起、および個別対応の推奨を含めます。",
       temperature: 0.5,
       responseMimeType: "application/json",
       responseSchema: lawInfoSchema,
   };
   
-  const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({ model: 'gemini-3.5-flash', contents: { parts }, config }));
+  const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({ model: activeModel, contents: { parts }, config }));
   
   try {
       const jsonText = response.text.trim();
@@ -306,7 +313,7 @@ export const diagnosePlantHealth = async (image: { mimeType: string; data: strin
       responseSchema: schema,
   };
 
-  const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({ model: 'gemini-3.5-flash', contents: { parts }, config }));
+  const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({ model: activeModel, contents: { parts }, config }));
   
   try {
       const jsonText = response.text.trim();
@@ -324,7 +331,7 @@ export const extractTextFromImage = async (mimeType: string, data: string): Prom
     if (!data) return "";
 
     const response = await withRetry<GenerateContentResponse>(() => getAiClient().models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: activeModel,
       contents: { parts: [ { text: "この画像から日本語のテキスト（手書きメモ、指示書、プリントなど）を正確に美しく文字起こし（OCR）してください。人物やプライバシーに関係する情報が含まれている場合は、個人を特定できる実名は省いて出力してください。テキストが存在しない場合は、「テキストが見つかりませんでした」と返してください。" }, { inlineData: { mimeType, data } } ] },
     }));
     return response.text.trim();
