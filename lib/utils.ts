@@ -44,50 +44,45 @@ export const fileToGenerativePart = async (file: File): Promise<{ mimeType: stri
 
 export const resizeImage = (file: File, maxPixels: number): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const { width, height } = img;
-        const currentPixels = width * height;
+    const blobUrl = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = () => {
+      URL.revokeObjectURL(blobUrl);
+      
+      const { width, height } = img;
+      const currentPixels = width * height;
 
-        if (currentPixels <= maxPixels) {
-          resolve(event.target?.result as string);
-          img.src = '';
-          return;
-        }
+      const scale = currentPixels > maxPixels ? Math.sqrt(maxPixels / currentPixels) : 1;
+      const newWidth = Math.floor(width * scale);
+      const newHeight = Math.floor(height * scale);
 
-        const scale = Math.sqrt(maxPixels / currentPixels);
-        const newWidth = Math.floor(width * scale);
-        const newHeight = Math.floor(height * scale);
-
-        const canvas = document.createElement('canvas');
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          img.src = '';
-          return reject(new Error('Could not get canvas context'));
-        }
-        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.80); 
-        
-        // 明示的なメモリ解放
-        canvas.width = 1;
-        canvas.height = 1;
+      const canvas = document.createElement('canvas');
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
         img.src = '';
+        return reject(new Error('Could not get canvas context'));
+      }
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-        resolve(resizedBase64);
-      };
-      img.onerror = (err) => {
-        img.src = '';
-        reject(err);
-      };
-      img.src = event.target?.result as string;
+      const resizedBase64 = canvas.toDataURL('image/jpeg', 0.70); 
+      
+      canvas.width = 1;
+      canvas.height = 1;
+      img.src = '';
+
+      resolve(resizedBase64);
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+
+    img.onerror = (err) => {
+      URL.revokeObjectURL(blobUrl);
+      img.src = '';
+      reject(err);
+    };
+
+    img.src = blobUrl;
   });
 };
 

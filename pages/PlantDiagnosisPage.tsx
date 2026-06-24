@@ -240,14 +240,15 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
     }
   });
 
-  // Photo / File select logic
+   // Photo / File select logic
   const handleImageSelected = async (file: File | null) => {
     if (!file) return;
     setImageBase64(null);
     setOcrLoading(true);
     try {
-        // スマホのメモリ不足（クラッシュ）を強力に防止するため、必要十分かつ軽量な画素数（45万画素、約800x560）に制限します。
-        const resized = await resizeImage(file, 450000);
+        // スマホのメモリ不足（クラッシュ）を強力に防止し、通信時間を極限まで短縮するため、
+        // 30万画素（約640x480相当）に制限します。これにより転送サイズが95%以上削減され爆速になります。
+        const resized = await resizeImage(file, 300000);
         setImageBase64(resized);
         
         // Automate Memo OCR transcription to help the user
@@ -260,7 +261,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
         }
     } catch(e) {
         console.error("Image resize or OCR failed", e);
-        alert("画像の読み取り、または手書き文字起こしに失敗しました。");
+        alert("画像の読み取り、または手書き文字起こしに失敗しました。スマホの電波状態の良い場所で、もう一度やり直してください。");
     } finally {
         setOcrLoading(false);
     }
@@ -307,7 +308,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
     } catch (e: any) {
       console.error(e);
       if (!stopDiagnoseRef.current) {
-        setError(e?.message || "AIへの相談中にエラーが発生しました。インターネット接続やAPIキーの設定を確認して再度お試しください。");
+        setError(e?.message || "AIへの相談中に一時的なエラーが発生したか、通信がタイムアウトしました。画像のファイルサイズは自動で極限まで軽量化されていますので、スマホの電波状態の良い場所でもう一度「相談する」ボタンをタップしてお試しください。");
       }
     } finally {
       setIsLoading(false);

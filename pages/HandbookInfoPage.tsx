@@ -92,10 +92,13 @@ const HandbookInfoPage: React.FC = () => {
             </div>
 
             {/* Boundary visual line */}
-            <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 my-1 font-black text-xs">
-              <span className="h-[2px] bg-red-300 flex-grow"></span>
-              <span>☝️ ここから上が重度 (ダブルカウント) ｜ ⚡️ ここから下が中・軽度 👇</span>
-              <span className="h-[2px] bg-red-300 flex-grow"></span>
+            <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 my-1 font-black text-xs w-full">
+              <span className="h-[2px] bg-red-300 flex-grow hidden sm:block"></span>
+              <span className="text-center">
+                <span className="block sm:inline">☝️ ここから上が重度 (ダブルカウント) ｜ </span>
+                <span className="block sm:inline">⚡️ ここから下が中・軽度 👇</span>
+              </span>
+              <span className="h-[2px] bg-red-300 flex-grow hidden sm:block"></span>
             </div>
 
             {/* Mild / Moderate zone */}
@@ -179,10 +182,13 @@ const HandbookInfoPage: React.FC = () => {
             </div>
 
             {/* Boundary visual line */}
-            <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 my-1 font-black text-xs">
-              <span className="h-[2px] bg-red-300 flex-grow"></span>
-              <span>☝️ 1〜2級が重度 (ダブルカウント) ｜ ⚡️ 3〜6級が通常カウント 👇</span>
-              <span className="h-[2px] bg-red-300 flex-grow"></span>
+            <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 my-1 font-black text-xs w-full">
+              <span className="h-[2px] bg-red-300 flex-grow hidden sm:block"></span>
+              <span className="text-center">
+                <span className="block sm:inline">☝️ 1〜2級が重度 (ダブルカウント) ｜ </span>
+                <span className="block sm:inline">⚡️ 3〜6級が通常カウント 👇</span>
+              </span>
+              <span className="h-[2px] bg-red-300 flex-grow hidden sm:block"></span>
             </div>
 
             {/* Light / Moderate Physical Group */}
@@ -192,6 +198,27 @@ const HandbookInfoPage: React.FC = () => {
                 ・<b>3級、4級、5級、6級の所持者</b>が該当します。日常生活は自立度が高く、特定の身体活動、重労働にのみ制限が生じる状態です。<br />
                 ・適切な道具の選定や、移動ルートの整備、過度に重い荷物の持ち運びを別スタッフが担う等の少しのチーム体制アレンジによって、一般スタッフと変わらぬ極めて優秀な作業員として大活躍いただけます。
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Professional Severe Judgment Section */}
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl border-2 border-orange-250 dark:border-gray-750 shadow-md space-y-4">
+          <div className="border-b-2 border-orange-200 pb-2 flex items-center gap-2">
+            <span className="w-8 h-8 rounded-full bg-orange-700 text-white flex items-center justify-center font-black">職</span>
+            <h3 className="font-extrabold text-gray-955 dark:text-white text-base sm:text-lg">職業的重度知的障害者判定（職業判定）とは</h3>
+          </div>
+          <p className="text-xs sm:text-sm text-gray-955 dark:text-gray-200 leading-relaxed font-bold">
+            障害者雇用促進法においては、障害者手帳の有無・等級だけでなく、ハローワーク等が特定の判定機関（障害者職業センターなど）の判定書に基づき行う<strong>「職業的重度知的障害者判定（職業判定）」</strong>があります。
+          </p>
+          <div className="space-y-3 font-bold text-xs sm:text-sm">
+            <div className="p-3.5 bg-orange-50/50 dark:bg-gray-900/10 border border-orange-200 rounded-xl space-y-2">
+              <h4 className="font-extrabold text-orange-950 dark:text-orange-300">💡 制度のポイントとメリット</h4>
+              <ul className="list-disc pl-5 space-y-1.5 text-gray-755 dark:text-gray-200 leading-relaxed text-xs">
+                <li>手帳がB判定（中・軽度）であっても、職業的な自立の困難さに応じて、判定機関により「重度知的障害者」と同等とみなされれば、<strong>ダブルカウント対象（重度知的障害者）</strong>として算定できます。</li>
+                <li>手帳のない、または手帳更新が間に合っていない場合等でも、知的障害者更生相談所、児童相談所、精神保健福祉センター、地域障害者職業センター等の公的な判定書類をハローワークに提示することで、重度知的障害者として届出・算定することが可能になります。</li>
+                <li>判定の手続きは、対象となるスタッフがハローワーク等に求職登録をするか、雇用後に管轄のハローワークへ申請を出すことで、専門のカウンセラーや職リハ機関と連携して行われます。</li>
+              </ul>
             </div>
           </div>
         </div>

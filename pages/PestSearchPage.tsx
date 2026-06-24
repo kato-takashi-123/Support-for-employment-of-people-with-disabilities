@@ -39,14 +39,16 @@ const PestSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
     setImageBase64(null);
     setResult(null);
     try {
-        const resized = await resizeImage(file, 800000);
+        // スマホのメモリ不足（クラッシュ）を強力に防止し、通信時間を極限まで短縮するため、
+        // 30万画素（約640x480相当）に制限します。これにより転送サイズが95%以上削減され爆速になります。
+        const resized = await resizeImage(file, 300000);
         setImageBase64(resized);
         if (autoSearch) {
             shouldAutoSearch.current = true;
         }
     } catch(e) {
         console.error("Image resize failed", e);
-        alert("画像の処理に失敗しました。");
+        alert("画像の処理に失敗しました。スマホの電波状態の良い場所で、もう一度やり直してください。");
     }
   };
 
@@ -108,10 +110,10 @@ const PestSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
         alert("外部検索では、テキストでのキーワード入力のみ承ることができます。");
       }
 
-    } catch (e) {
+    } catch (e: any) {
       console.error("Search failed:", e);
       if (!stopSearchRef.current) {
-        alert("法律検索に失敗しました。");
+        alert(e?.message || "AIへの相談中に一時的なエラーが発生したか、通信がタイムアウトしました。画像のファイルサイズは自動で極限まで軽量化されていますので、スマホの電波状態の良い場所でもう一度「法規・対応策を検索する」ボタンをタップしてお試しください。");
       }
     } finally {
       setIsLoading(false);

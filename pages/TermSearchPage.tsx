@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { AiSearchResult, searchGardeningTerm } from '../services/geminiService';
+import React, { useState, useCallback } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
-import { FormattedContent } from '../components/common/FormattedContent';
-import { MicrophoneIcon, CloseIcon } from '../components/Icons';
+import { MicrophoneIcon } from '../components/Icons';
 import { ApiCallHandler, AppSettings } from '../types';
 
 type PageProps = {
@@ -24,70 +22,39 @@ const MAIN_WELFARE_TERMS = [
   'スモールステップ', '視覚構造化（イラスト化）'
 ];
 
-const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
+const TermSearchPage: React.FC<PageProps> = ({ settings }) => {
   const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<AiSearchResult | null>(null);
-  const stopSearchRef = useRef(false);
+  const [searchedTerm, setSearchedTerm] = useState<string | null>(null);
 
   const { isListening, startListening } = useVoiceRecognition({
     onResult: (text: string) => {
       setQuery(prev => prev + (prev ? ' ' : '') + text);
     }
   });
-  
-  const handleStopSearch = () => {
-    stopSearchRef.current = true;
-    setIsLoading(false);
-  };
 
-  const handleSearch = useCallback(async (searchTerm?: string) => {
+  const handleSearch = useCallback((searchTerm?: string) => {
     const termToSearch = (searchTerm || query).split('（')[0].trim();
     if (!termToSearch) return;
 
     setQuery(termToSearch);
-    stopSearchRef.current = false;
-    setIsLoading(true);
-    setResult(null);
-    const aiEnabled = settings.enableAiFeatures && !!settings.geminiApiKey;
+    setSearchedTerm(termToSearch);
 
+    // Fallback or direct web search
+    const searchQuery = encodeURIComponent(`${termToSearch} 障がい者福祉 用語`);
+    const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+    
     try {
-      if (settings.searchMode === 'ai' && aiEnabled) {
-        try {
-          const res = await handleApiCall(() => searchGardeningTerm(termToSearch));
-          if (stopSearchRef.current) return;
-          if (res) {
-            setResult(res);
-            return; // AI success
-          }
-        } catch (aiError) {
-          console.warn("AI term search failed, falling back to web search.", aiError);
-          if (stopSearchRef.current) return;
-        }
-      }
-
-      // Fallback or direct web search
-      const searchQuery = encodeURIComponent(`${termToSearch} 障がい者福祉 用語`);
-      const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
       window.open(searchUrl, '_blank', 'noopener,noreferrer');
-
-    } catch (webSearchError) {
-      console.error("Search failed:", webSearchError);
-      if (!stopSearchRef.current) {
-        alert("検索に失敗しました。");
-      }
-    } finally {
-      setIsLoading(false);
+    } catch (e) {
+      console.error("Popup blocked", e);
     }
-  }, [query, handleApiCall, settings]);
+  }, [query]);
 
   const handleTermClick = (term: string) => {
     const mainTerm = term.split('（')[0].trim();
     setQuery(mainTerm);
     handleSearch(mainTerm);
   };
-  
-  const isAiSearchEnabled = settings.enableAiFeatures && !!settings.geminiApiKey;
 
   return (
     <>
@@ -97,11 +64,11 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
           <h3 className="font-extrabold text-gray-955 dark:text-gray-100 flex items-center justify-between flex-wrap gap-2 text-base sm:text-lg">
             <span className="flex items-center gap-2">📚 障がい者福祉用語辞典</span>
             <span className="text-xs sm:text-sm bg-orange-700 text-white px-3 py-1 rounded font-extrabold">
-              {settings.searchMode === 'ai' && isAiSearchEnabled ? 'AI検索' : 'Web検索'}
+              Web検索
             </span>
           </h3>
           <p className="text-sm sm:text-base text-gray-950 dark:text-gray-100 leading-relaxed font-bold">
-            障がい者福祉、雇用支援、合理的配慮にまつわる仕組みや専門用語を、解説イラスト／箇条書き等で分かりやすく検索・解説します。
+            障がい者福祉、雇用支援、合理的配慮にまつわる仕組みや専門用語を、外部のWeb検索（Google検索）を利用して詳しく検索・解説します。
           </p>
           
           <div className="flex gap-2">
@@ -113,11 +80,10 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
                 onKeyDown={e => e.key === 'Enter' && handleSearch()} 
                 placeholder={isListening ? "マイクから聞き取り中..." : "例: 合理的配慮"} 
                 className="w-full p-3 text-sm sm:text-base border-2 border-orange-300 dark:border-gray-600 dark:bg-gray-700 rounded-xl pr-12 focus:outline-orange-500 font-bold dark:text-white" 
-                disabled={isLoading || isListening} 
+                disabled={isListening} 
               />
               <button 
                 onClick={startListening} 
-                disabled={isLoading} 
                 className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-full ${isListening ? 'bg-red-600 text-white animate-pulse' : 'text-orange-700 hover:bg-orange-100 dark:hover:bg-gray-650'}`}
               >
                 <MicrophoneIcon className="h-5 w-5" />
@@ -126,7 +92,7 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
             
             <button 
               onClick={() => handleSearch()} 
-              disabled={isLoading || !query.trim()} 
+              disabled={!query.trim()} 
               className="bg-orange-700 hover:bg-orange-850 text-white font-extrabold py-3 px-5 rounded-xl text-sm sm:text-base shadow-md disabled:bg-gray-300 disabled:text-gray-500 transition-colors"
             >
               検索
@@ -134,44 +100,40 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
           </div>
         </div>
         
-        {isLoading && (
-          <div className="flex items-center justify-center gap-4 text-center p-3 bg-gray-100 dark:bg-gray-700 rounded-xl">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-700"></div>
-              <span className="font-extrabold text-gray-955 dark:text-gray-200 text-sm">AI福祉アドバイザーが解説をまとめています...</span>
-              <button onClick={handleStopSearch} className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded-full p-1 hover:bg-red-200">
-                  <CloseIcon className="h-4 w-4" />
-              </button>
-          </div>
-        )}
-        
-        {result && (
+        {searchedTerm && (
           <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700 fade-in space-y-4">
             <h2 className="text-base sm:text-lg font-extrabold text-orange-950 dark:text-orange-200 border-b-2 border-orange-200 pb-2 flex items-center gap-2">
-              <span>📖</span>
-              <span>「{query}」の分かりやすい解説</span>
+              <span>🔍</span>
+              <span>「{searchedTerm}」の検索結果</span>
             </h2>
-            <div className="leading-relaxed text-sm sm:text-base text-gray-955 dark:text-gray-100 font-bold space-y-2">
-              <FormattedContent content={result.text} />
-            </div>
+            <p className="text-xs sm:text-sm text-gray-955 dark:text-gray-200 font-bold leading-relaxed">
+              ブラウザの別タブでGoogleのWeb検索結果が開きます。ポップアップがブロックされた場合や自動で開かない場合は、以下のボタンをタップしてください。
+            </p>
+            <a 
+              href={`https://www.google.com/search?q=${encodeURIComponent(`${searchedTerm} 障がい者福祉 用語`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-orange-100 hover:bg-orange-200 dark:bg-gray-750 text-orange-950 dark:text-orange-200 border-2 border-orange-300 dark:border-gray-600 font-black py-4 px-4 rounded-xl flex items-center justify-center gap-2 text-sm sm:text-base shadow-sm transition-colors text-center"
+            >
+              🌐 「{searchedTerm}」をGoogleでWeb検索する
+            </a>
           </div>
         )}
 
-        {!isLoading && !result && (
-          <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700 fade-in space-y-3">
-            <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-sm sm:text-base">💡 よく検索される福祉・支援キーワード</h3>
-            <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
-              {MAIN_WELFARE_TERMS.map((term, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleTermClick(term)}
-                  className="px-3.5 py-2.5 bg-orange-50 text-orange-950 dark:bg-gray-700 dark:text-orange-300 rounded-xl border-2 border-orange-200 hover:bg-orange-100 dark:hover:bg-gray-650 font-extrabold transition-colors"
-                >
-                  {term}
-                </button>
-              ))}
-            </div>
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700 fade-in space-y-3">
+          <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-sm sm:text-base">💡 よく検索される福祉・支援キーワード</h3>
+          <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+            {MAIN_WELFARE_TERMS.map((term, index) => (
+              <button
+                key={index}
+                onClick={() => handleTermClick(term)}
+                className="px-3.5 py-2.5 bg-orange-50 text-orange-950 dark:bg-gray-700 dark:text-orange-300 rounded-xl border-2 border-orange-200 hover:bg-orange-100 dark:hover:bg-gray-650 font-extrabold transition-colors"
+              >
+                {term}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
