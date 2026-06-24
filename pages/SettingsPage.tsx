@@ -125,7 +125,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           rel="noopener noreferrer" 
           className="inline-flex items-center justify-center gap-2 w-full bg-orange-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-orange-700 transition-colors mt-4 text-xs"
         >
-          <ExternalLinkIcon className="h-4.5 w-4.5" />
+          <ExternalLinkIcon className="h-5 w-5 flex-shrink-0" />
           <span>Google AI Studioを開く</span>
         </a>
       </div>

@@ -467,17 +467,17 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                   </div>
 
                   <div className="space-y-3">
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <LeafIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <LeafIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>サポート推奨レベル・緊迫度</span>
                       </h5>
                       <p className="text-xs text-gray-700 dark:text-gray-300 font-bold">{item.answer.overallHealth}</p>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <PestControlIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <PestControlIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>障がい特性から見た状況分析</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -485,9 +485,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WateringIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <WateringIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>合理的配慮に基づく具体的指示と工夫</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -495,9 +495,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <FertilizingIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <FertilizingIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>農場長の心構えと対話のアドバイス</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -505,9 +505,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WeatherIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <WeatherIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>支援指示・対話のバランス状態 ({item.answer.watering.status})</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
@@ -515,9 +515,9 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-850 p-4.5 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
+                    <div className="bg-white dark:bg-gray-850 p-4 rounded-xl border border-orange-200 shadow-xs space-y-1.5">
                       <h5 className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                        <WeatherIcon className="h-4.5 w-4.5 text-orange-700" />
+                        <WeatherIcon className="h-5 w-5 flex-shrink-0 text-orange-700" />
                         <span>働く作業環境の物理的調整・配慮</span>
                       </h5>
                       <div className="text-xs text-gray-700 dark:text-gray-300 font-bold whitespace-pre-wrap leading-relaxed">
