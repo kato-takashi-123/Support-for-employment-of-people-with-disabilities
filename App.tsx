@@ -307,6 +307,11 @@ export const App = () => {
 
     loadData();
     requestPersistentStorage();
+    
+    // 起動・更新時に必ずホーム画面（PLANT_DIAGNOSIS）から立ち上がるように強制する
+    setPage('PLANT_DIAGNOSIS');
+    setActiveTab('PLANT_DIAGNOSIS');
+    setPageParams({});
   }, []);
 
   const handleSettingsChange = useCallback(async (newSettings: AppSettings) => {
