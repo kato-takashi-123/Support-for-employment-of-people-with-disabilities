@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TextToSpeechButton } from '../components/common/TextToSpeechButton';
 
 type GuideTab = 'institutions' | 'services' | 'procedure';
 
@@ -105,9 +106,20 @@ const RecipeSearchPage: React.FC = () => {
       {/* Tab Contents: institutions */}
       {activeTab === 'institutions' && (
         <div className="space-y-4 fade-in">
-          <p className="text-sm text-gray-955 dark:text-gray-100 font-extrabold px-1 leading-relaxed">
-            作業現場における意思疎通のすれ違いや、労働時間の配慮方法など、管理担当者のみで抱え込んで答えを出すのは極めてリスクです。以下の無料公的専門機関にいつでもご相談ください。
-          </p>
+          <div className="flex items-center justify-between flex-wrap gap-2 px-1 border-b border-orange-100 dark:border-gray-700 pb-2">
+            <p className="text-sm text-gray-955 dark:text-gray-100 font-extrabold leading-relaxed flex-1">
+              作業現場における意思疎通のすれ違いや、労働時間の配慮方法など、管理担当者のみで抱え込んで答えを出すのは極めてリスクです。以下の無料公的専門機関にいつでもご相談ください。
+            </p>
+            <TextToSpeechButton
+              content={`公的相談窓口のご案内。
+1、市町村の障害福祉担当課。障害福祉サービスの申請、給付決定、障害者手帳の日常生活相談に必須。
+2、障害者就業、生活支援センター、通称なかぽつ。就労と日常生活の両面を一体的に支える最も機動的な相談窓口。健康、金銭管理、住居確保といった暮らしの課題に対応。
+3、公共職業安定所、ハローワーク専門窓口。仕事の紹介と、雇用継続のための各種助成金申請、指導窓口。
+4、地域障害者職業センター。専門的な職業リハビリテーション、ジョブコーチ派遣、職場アセスメント。
+5、基幹相談支援センター。地域の相談ネットワークのハブとしてトータル支援を繋ぐ窓口。`}
+              size="sm"
+            />
+          </div>
           {institutionsList.map((inst, index) => (
             <div key={index} className="bg-white dark:bg-gray-800 p-5 rounded-2xl border-2 border-orange-300 dark:border-gray-700 shadow-md space-y-3">
               <h3 className="font-extrabold text-gray-955 dark:text-white text-sm sm:text-base">
@@ -127,9 +139,19 @@ const RecipeSearchPage: React.FC = () => {
       {/* Tab Contents: services */}
       {activeTab === 'services' && (
         <div className="space-y-4 fade-in">
-          <p className="text-sm text-gray-955 dark:text-gray-100 font-extrabold px-1 leading-relaxed">
-            就労スタッフ本人が生活面や体調面でのコントロールを維持し、安定した貢献を行うためには、グループホーム・医療連携などの生活支援福祉サービスを利用することが重要です。
-          </p>
+          <div className="flex items-center justify-between flex-wrap gap-2 px-1 border-b border-orange-100 dark:border-gray-700 pb-2">
+            <p className="text-sm text-gray-955 dark:text-gray-100 font-extrabold px-1 leading-relaxed">
+              就労スタッフ本人が生活面や体調面でのコントロールを維持し、安定した貢献を行うためには、グループホーム・医療連携などの生活支援福祉サービスを利用することが重要です。
+            </p>
+            <TextToSpeechButton
+              content={`支援福祉サービスのご案内。
+1、共同生活援助、グループホーム。夕食の提供、夜間の見守り、薬や金銭管理の適切な支援を行いながら、スタッフが地域の一軒家やアパートで共に暮らす福祉ホーム。
+2、訪問看護、精神科訪問看護等。専門の看護師等が自宅を訪問し、心身の健康や服薬を守るサービス。
+3、就労移行支援、就労定着支援。原則2年間の期限内にマナーや農作業の基礎訓練を行う就労移行支援と、就労開始後の定着同行ケアを行う就労定着支援。
+4、就労継続支援、A型、B型。最低賃金を保障する雇用契約を結ぶA型事業所と、本人のペースで自主作業を行い福祉的工賃を得るB型事業所。`}
+              size="sm"
+            />
+          </div>
           {servicesList.map((srv, index) => (
             <div key={index} className="bg-white dark:bg-gray-800 p-5 rounded-2xl border-2 border-orange-200 dark:border-gray-700 shadow-md space-y-2">
               <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-sm sm:text-base">
@@ -149,9 +171,19 @@ const RecipeSearchPage: React.FC = () => {
       {/* Tab Contents: procedure */}
       {activeTab === 'procedure' && (
         <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl border-2 border-orange-300 dark:border-gray-700 shadow-md space-y-5 fade-in">
-          <h3 className="font-extrabold text-orange-955 dark:text-orange-200 text-base border-b-2 border-orange-200 pb-1.5 flex items-center gap-2">
-            <span>📋</span> <span>障がい福祉サービス 受給までの具体的手続</span>
-          </h3>
+          <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 border-orange-200 pb-1.5">
+            <h3 className="font-extrabold text-orange-955 dark:text-orange-200 text-base flex items-center gap-2">
+              <span>📋</span> <span>障がい福祉サービス 受給までの具体的手続</span>
+            </h3>
+            <TextToSpeechButton
+              content={`障がい福祉サービス 受給までの具体的手続。
+ステップ1、障害者手帳または医師の診断書の準備。精神、知的、身体の手帳、もしくは主治医の利用が必要と記された医師の診断書や通院証明書を手に入れます。
+ステップ2、市町村福祉窓口での利用相談、支給申請。市区町村役場の障害福祉課などを訪問し、自身に合ったサービスを申請します。この際、現行の体調や就労意欲に関する認定面談が行われます。
+ステップ3、サービス等利用計画案の作成、提出。役所の指定する指定相談支援事業所の計画作成専門員が本人と面談し、利用計画書案を作成して市役所へ提出します。
+ステップ4、受給者証の交付と福祉事業所との本契約。役所の審査、支給決定を経て、受給者証が本人のもとへ送付されます。これを持って希望するグループホームや事業所等と最終利用契約を結び、利用がスタートします。`}
+              size="sm"
+            />
+          </div>
           <p className="text-sm text-gray-955 dark:text-gray-100 font-bold leading-relaxed">
             生活や通労を支える福祉サービスや就労支援を、自己負担「原則１割（※所得に応じた免除枠によりほぼゼロ）」で利用するためには、行政手続きを経て『受給者証』の交付を受ける必要があります。
           </p>

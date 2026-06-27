@@ -150,6 +150,125 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </div>
       </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">緊急対応マニュアル 参考URL設定</h3>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-orange-100 dark:border-gray-700 shadow-sm space-y-4">
+          <p className="text-[10px] text-gray-500 leading-normal">
+            緊急対応マニュアルの各項目（熱中症、心肺蘇生、てんかん、担架）に表示される「参考資料」および「動画解説」ボタンの遷移先URLをカスタマイズできます。
+          </p>
+
+          <div className="space-y-3 pt-2 border-t border-orange-50">
+            {/* 熱中症 */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300">🥵 熱中症の対応</h4>
+              <div className="grid grid-cols-1 gap-2 pl-2 border-l-2 border-orange-200">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">参考資料 PDF URL</label>
+                  <input
+                    type="url"
+                    value={settings.heatstrokePdfUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ heatstrokePdfUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">解説動画 URL</label>
+                  <input
+                    type="url"
+                    value={settings.heatstrokeVideoUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ heatstrokeVideoUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 心肺蘇生・AED */}
+            <div className="space-y-2 pt-2 border-t border-orange-50/55">
+              <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300">🩻 心肺蘇生とAED</h4>
+              <div className="grid grid-cols-1 gap-2 pl-2 border-l-2 border-orange-200">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">参考資料 PDF URL</label>
+                  <input
+                    type="url"
+                    value={settings.cprPdfUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ cprPdfUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">解説動画 URL</label>
+                  <input
+                    type="url"
+                    value={settings.cprVideoUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ cprVideoUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* てんかん */}
+            <div className="space-y-2 pt-2 border-t border-orange-50/55">
+              <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300">🧠 てんかん発作対応</h4>
+              <div className="grid grid-cols-1 gap-2 pl-2 border-l-2 border-orange-200">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">参考資料 PDF URL</label>
+                  <input
+                    type="url"
+                    value={settings.epilepsyPdfUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ epilepsyPdfUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">解説動画 URL</label>
+                  <input
+                    type="url"
+                    value={settings.epilepsyVideoUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ epilepsyVideoUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 担架 */}
+            <div className="space-y-2 pt-2 border-t border-orange-50/55">
+              <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300">🪵 担架の使い方</h4>
+              <div className="grid grid-cols-1 gap-2 pl-2 border-l-2 border-orange-200">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">参考資料 PDF URL</label>
+                  <input
+                    type="url"
+                    value={settings.stretcherPdfUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ stretcherPdfUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-750 dark:text-gray-300">解説動画 URL</label>
+                  <input
+                    type="url"
+                    value={settings.stretcherVideoUrl || ''}
+                    onChange={e => handlePartialSettingsChange({ stretcherVideoUrl: e.target.value })}
+                    className="mt-1 w-full p-2 text-xs border border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-lg focus:outline-orange-400"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div className="space-y-2">
         <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">AI相談機能設定</h3>

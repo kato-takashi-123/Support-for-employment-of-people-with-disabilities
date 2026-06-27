@@ -49,6 +49,14 @@ export const App = () => {
       lastLegalUpdateCheck: '',
       legalUpdateLog: '初期バージョン（2024年の2.5％法定雇用率、2026年7月の2.7％改正、各新設特定短時間算定までカバーして動作しています）',
       geminiModel: 'gemini-3.1-flash-lite',
+      cprPdfUrl: 'https://www.med.or.jp/99/poster2025.pdf',
+      cprVideoUrl: 'https://youtu.be/NGNaD_UY-A4?si=fY50Q0NuRhdUGkyj',
+      epilepsyPdfUrl: 'https://www.tenkan.info/pdf/ucb_epi_info_dl_list_221111.pdf',
+      epilepsyVideoUrl: 'https://youtu.be/3lhIdoxUBsY?si=7UBOiUHEAqX51KoH',
+      heatstrokePdfUrl: 'https://www.wbgt.env.go.jp/pdf/pr/20230530_leaflet_in_disasters.pdf',
+      heatstrokeVideoUrl: 'https://youtu.be/O4spygt2i7w',
+      stretcherPdfUrl: 'https://www.city.toyonaka.osaka.jp/kurashi/bosai/toyonakafiredept/license/sonota/hyoshi_handbook.files/5-1stretchertransport_bosaihandbook.pdf',
+      stretcherVideoUrl: 'https://youtu.be/5BVngUdIbnk?si=nostvF3QsJz0qreC',
     };
     try {
       const backup = localStorage.getItem('settings_backup');
@@ -503,7 +511,7 @@ export const App = () => {
   const pages: { [key: string]: { comp: React.ReactNode, title: string, showBack: boolean } } = {
     TOOLS: { comp: <ToolsPage setPage={changePage} />, title: 'サポートツール一覧', showBack: true },
     RECIPE_SEARCH: { comp: <RecipeSearchPage />, title: '専門相談窓口・福祉サービス利用ガイド', showBack: true },
-    VEGETABLE_SEARCH: { comp: <VegetableSearchPage />, title: '緊急対応マニュアル', showBack: true },
+    VEGETABLE_SEARCH: { comp: <VegetableSearchPage settings={settings} />, title: '緊急対応マニュアル', showBack: true },
     PEST_SEARCH: { comp: <PestSearchPage settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} pageParams={pageParams} />, title: '合理的配慮・雇用法・虐待防止検索', showBack: true },
     TERM_SEARCH: { comp: <TermSearchPage settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} pageParams={pageParams} />, title: '障がい者福祉用語辞典', showBack: true },
     PLANT_DIAGNOSIS: { comp: <PlantDiagnosisPage setPage={changePage} settings={settings} onSettingsChange={handleSettingsChange} handleApiCall={handleApiCall} records={[]} pageParams={pageParams} />, title: '障がい者雇用支援アプリ', showBack: false },

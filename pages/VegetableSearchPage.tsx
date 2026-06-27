@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { MicrophoneIcon, CloseIcon } from '../components/Icons';
+import { AppSettings } from '../types';
+import { TextToSpeechButton } from '../components/common/TextToSpeechButton';
+import { CprMetronome } from '../components/common/CprMetronome';
 
 type EmergencyTopic = 'heatstroke' | 'cpr' | 'epilepsy' | 'stretcher';
 
-const VegetableSearchPage: React.FC = () => {
+type PageProps = {
+  settings: AppSettings;
+};
+
+const VegetableSearchPage: React.FC<PageProps> = ({ settings }) => {
   const [activeTopic, setActiveTopic] = useState<EmergencyTopic>('heatstroke');
   const [timerActive, setTimerActive] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -85,9 +92,38 @@ const VegetableSearchPage: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-750 space-y-4">
         {activeTopic === 'heatstroke' && (
           <div className="space-y-3">
-            <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg border-b-2 border-orange-200 pb-1.5 flex items-center gap-2">
-              <span>🥵</span> <span>熱中症の応急手順（最優先）</span>
-            </h3>
+            <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 border-orange-200 pb-1.5">
+              <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg flex items-center gap-2">
+                <span>🥵</span> <span>熱中症の応急手順（最優先）</span>
+              </h3>
+              <TextToSpeechButton
+                content={`🥵 熱中症の応急手順。
+1、意識と会話のレベルを迅速に確認。声をかけて適切な返答ができるか、はっきりした受け答えができるかを確認します。
+2、意識や返答が怪しい場合。即座に119番通報！救急隊を待つ間に体を冷やす応急処置を開始します。
+3、自力で会話可能な場合の応急処置。すぐに風通しの良い日陰やエアコンの効いた室内へ避難。衣服を緩めて体表を冷やし、水分や塩分を速やかに補給させます。自分で飲めない、吐き気がある、または改善しない場合はすぐに医療機関に搬送または119番通報を行います。`}
+                size="sm"
+              />
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex flex-wrap gap-2 pt-1 pb-3 border-b border-orange-100 dark:border-gray-700">
+              <a
+                href={settings?.heatstrokePdfUrl || 'https://www.wbgt.env.go.jp/pdf/pr/20230530_leaflet_in_disasters.pdf'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                📄 参考資料 (PDF)
+              </a>
+              <a
+                href={settings?.heatstrokeVideoUrl || 'https://youtu.be/O4spygt2i7w'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                🎬 解説動画
+              </a>
+            </div>
             
             {/* Step 1 */}
             <div className="p-4 bg-orange-50 dark:bg-gray-950/30 rounded-xl border-2 border-orange-200 flex items-start gap-3">
@@ -139,9 +175,39 @@ const VegetableSearchPage: React.FC = () => {
 
         {activeTopic === 'cpr' && (
           <div className="space-y-3">
-            <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg border-b-2 border-orange-200 pb-1.5 flex items-center gap-2">
-              <span>🩻</span> <span>心肺蘇生(CPR)とAEDの迅速フロー</span>
-            </h3>
+            <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 border-orange-200 pb-1.5">
+              <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg flex items-center gap-2">
+                <span>🩻</span> <span>心肺蘇生(CPR)とAEDの迅速フロー</span>
+              </h3>
+              <TextToSpeechButton
+                content={`🩻 心肺蘇生とAEDの迅速フロー。
+1、周囲の安全確認と役割・応援要請。誰か来てください！あなたは119番を、あなたはそこのAEDを持ってきてください！と具体的に指差して指示します。
+2、10秒以内での呼吸有無の確認。胸と腹部の動きを目視します。あえぐような変な呼吸、死戦期呼吸は、呼吸なしとみなして即座に胸骨圧迫へ移行します。
+3、全力で胸骨圧迫の開始。胸の真ん中を、強さ5センチ沈むように、1分間に100から120回のテンポ、アンパンマンの曲のスピードで、しっかり絶え間なく30回強く押します。可能なら人工呼吸を交互に行います。
+4、AEDの併用とガイド実行。AEDが到着したら電源を入れ、アナウンスの指示に従います。放電直後に再度胸骨圧迫を直ちに再開してください。`}
+                size="sm"
+              />
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex flex-wrap gap-2 pt-1 pb-3 border-b border-orange-100 dark:border-gray-700">
+              <a
+                href={settings?.cprPdfUrl || 'https://www.med.or.jp/99/poster2025.pdf'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                📄 参考資料 (PDF)
+              </a>
+              <a
+                href={settings?.cprVideoUrl || 'https://youtu.be/NGNaD_UY-A4?si=fY50Q0NuRhdUGkyj'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                🎬 解説動画
+              </a>
+            </div>
 
             {/* Step 1 */}
             <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border-2 border-red-200 flex items-start gap-3">
@@ -166,11 +232,12 @@ const VegetableSearchPage: React.FC = () => {
             {/* Step 3 */}
             <div className="p-4 bg-orange-50 dark:bg-gray-950/30 rounded-xl border-2 border-orange-300 flex items-start gap-3">
               <span className="w-8 h-8 bg-orange-700 text-white text-base font-extrabold rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="font-extrabold text-sm sm:text-base text-gray-955 dark:text-white mb-1">③ 全力で胸骨圧迫の開始（絶え間なく）</p>
-                <p className="text-sm sm:text-base text-gray-950 dark:text-gray-150 font-bold leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-950 dark:text-gray-150 font-bold leading-relaxed mb-3">
                   胸の真ん中を、<strong>強さ5cm沈むように</strong>、<strong>1分間に100〜120回のテンポ（アンパンマンの曲のスピード）</strong>で、しっかり絶え間なく30回強く押します（可能な場合は人工呼吸2回を交互に）。
                 </p>
+                <CprMetronome />
               </div>
             </div>
             <div className="text-center text-orange-650 font-extrabold text-xl">&#x2193;</div>
@@ -190,9 +257,39 @@ const VegetableSearchPage: React.FC = () => {
 
         {activeTopic === 'epilepsy' && (
           <div className="space-y-3">
-            <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg border-b-2 border-orange-200 pb-1.5 flex items-center gap-2">
-              <span>🧠</span> <span>てんかん発作への対処フロー</span>
-            </h3>
+            <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 border-orange-200 pb-1.5">
+              <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg flex items-center gap-2">
+                <span>🧠</span> <span>てんかん発作への対処フロー</span>
+              </h3>
+              <TextToSpeechButton
+                content={`🧠 てんかん発作への対処フロー。
+1、落ち着いて対応。口には絶対に物を挟まない！口腔内にハサミや割り箸などを押し込むのは窒息を招くため絶対に禁止です。口は閉じさせてそのままにしてください。
+2、周囲の危険物撤去と頭の保護。周囲の農具、石材、カゴ等に本人が当たるのを防ぐため周囲を空けます。頭の下に柔らかい上着やタオルなどをそっと敷きます。
+3、側臥位、横向きで気道を確保。体や顔をそっと横向き、回復体位にして、唾液や泡が喉に詰まらず、自然に口の外へ流れるようにします。発作開始時刻を時計やタイマーで正確に計りましょう。
+4、救急要請の判断基準。一般的には2から3分で発作が治まりますが、発作が5分以上継続する、連続して何度も起こる、自発呼吸が戻らない、意識が20分以上戻らない場合は速やかに救急車、119番を要請してください。`}
+                size="sm"
+              />
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex flex-wrap gap-2 pt-1 pb-3 border-b border-orange-100 dark:border-gray-700">
+              <a
+                href={settings?.epilepsyPdfUrl || 'https://www.tenkan.info/pdf/ucb_epi_info_dl_list_221111.pdf'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                📄 参考資料 (PDF)
+              </a>
+              <a
+                href={settings?.epilepsyVideoUrl || 'https://youtu.be/3lhIdoxUBsY?si=7UBOiUHEAqX51KoH'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                🎬 解説動画
+              </a>
+            </div>
 
             {/* Step 1 */}
             <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border-2 border-red-200 flex items-start gap-3">
@@ -241,9 +338,38 @@ const VegetableSearchPage: React.FC = () => {
 
         {activeTopic === 'stretcher' && (
           <div className="space-y-4">
-            <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg border-b-2 border-orange-200 pb-1.5 flex items-center gap-2">
-              <span>🪵</span> <span>簡易担架の作成・搬送ステップ</span>
-            </h3>
+            <div className="flex items-center justify-between flex-wrap gap-2 border-b-2 border-orange-200 pb-1.5">
+              <h3 className="font-extrabold text-orange-950 dark:text-orange-200 text-base sm:text-lg flex items-center gap-2">
+                <span>🪵</span> <span>簡易担架の作成・搬送ステップ</span>
+              </h3>
+              <TextToSpeechButton
+                content={`🪵 簡易担架の作成・搬送ステップ。
+1、簡易担架の自作法。太く頑丈な支柱や丸太2本と、大きめの毛布1枚を用意します。毛布の端折り返しにより、乗せる人の体重摩擦のみで強固に固定される構造を作ります。
+2、複数人で息を合わせて転がし乗せます。頭部や脊椎等の曲がりやねじれを防ぐため、全員で声をかけながら、板を平らに保つイメージで慎重に体を丸ごと転がすようにして担架へ移します。
+3、搬送方向。原則は足元を進行方向にする。搬送時は足を前にして進むことを基本とします。これは倒れた人の目線において先が見えない恐怖感をなくし、後ろで運ぶ指導員が本人の呼吸や表情、顔色の急変をいつでも見守り観察できるためです。坂を上る、段差を越える際は頭部を高く保つため頭が先になります。`}
+                size="sm"
+              />
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex flex-wrap gap-2 pt-1 pb-3 border-b border-orange-100 dark:border-gray-700">
+              <a
+                href={settings?.stretcherPdfUrl || 'https://www.city.toyonaka.osaka.jp/kurashi/bosai/toyonakafiredept/license/sonota/hyoshi_handbook.files/5-1stretchertransport_bosaihandbook.pdf'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                📄 参考資料 (PDF)
+              </a>
+              <a
+                href={settings?.stretcherVideoUrl || 'https://youtu.be/5BVngUdIbnk?si=nostvF3QsJz0qreC'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 min-w-[120px] text-center bg-orange-50 hover:bg-orange-100 text-orange-950 dark:bg-gray-700 dark:text-orange-200 border-2 border-orange-200 dark:border-gray-600 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                🎬 解説動画
+              </a>
+            </div>
 
             {/* Step 1 */}
             <div className="p-4 bg-orange-50 dark:bg-gray-950/30 rounded-xl border-2 border-orange-200 flex items-start gap-3">
@@ -327,15 +453,18 @@ const VegetableSearchPage: React.FC = () => {
           value={memoText}
           onChange={e => setMemoText(e.target.value)}
           placeholder="【記入例】14:10 除草作業中に顔が赤くへたり込む。14:12 日陰に移動。14:15 首に冷たいペットボトルを当て冷却。意識あり、119番連絡済み"
-          className="w-full text-sm sm:text-base p-3.5 border-2 border-orange-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl min-h-[110px] focus:outline-orange-500 font-bold text-gray-950 dark:text-gray-100"
+          className="w-full text-sm sm:text-base p-3.5 border-2 border-orange-200 dark:border-gray-650 dark:bg-gray-700 rounded-xl min-h-[110px] focus:outline-orange-500 font-bold text-gray-950 dark:text-gray-100"
         />
         {memoText && (
-          <button
-            onClick={() => setMemoText('')}
-            className="text-sm font-extrabold text-red-700 dark:text-red-400 underline hover:text-red-900"
-          >
-            メモをクリア
-          </button>
+          <div className="flex items-center gap-2">
+            <TextToSpeechButton content={`緊急メモ内容。${memoText}`} size="sm" />
+            <button
+              onClick={() => setMemoText('')}
+              className="text-sm font-extrabold text-red-700 dark:text-red-400 underline hover:text-red-900"
+            >
+              メモをクリア
+            </button>
+          </div>
         )}
       </div>
     </div>

@@ -10,6 +10,7 @@ import {
   CopyIcon, CheckIcon, CloseIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon
 } from '../components/Icons';
 import { ApiCallHandler } from '../types';
+import { TextToSpeechButton } from '../components/common/TextToSpeechButton';
 
 type PageProps = {
   handleApiCall: ApiCallHandler;
@@ -439,7 +440,11 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
 
               {isExpanded && (
                 <div className="border-t border-orange-100 dark:border-gray-700 bg-orange-50/10 dark:bg-gray-900/10 p-4 space-y-4 animate-fadeIn">
-                  <div className="flex justify-end">
+                  <div className="flex justify-end gap-2">
+                    {(() => {
+                      const speakText = `「${item.answer.plantName}」のAI雇用支援診断アドバイス結果です。サポート推奨レベル・緊迫度は、${item.answer.overallHealth}です。状況分析：${item.answer.pestAndDisease.details}。合理的配慮に基づく具体的指示と工夫：${item.answer.pestAndDisease.countermeasures}。農場長の心構えと言葉かけのコツ：${item.answer.fertilizer.recommendation}。サポート強度：${item.answer.watering.status}、対話のバランス：${item.answer.watering.recommendation}。作業環境の物理的調整・配慮：${item.answer.environment.recommendation}`;
+                      return <TextToSpeechButton content={speakText} size="sm" />;
+                    })()}
                     <button 
                       onClick={() => {
                         const textToCopy = `【相談概要】: ${item.answer.plantName}\n`
@@ -454,7 +459,7 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
                           alert("クリップボードにコピーしました！");
                         });
                       }} 
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-orange-100 dark:bg-gray-700 rounded-lg text-xs font-extrabold text-orange-950 dark:text-orange-200 border border-orange-300 shadow-sm"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-orange-100 dark:bg-gray-750 dark:hover:bg-gray-700 rounded-lg text-xs font-extrabold text-orange-950 dark:text-orange-200 border border-orange-300 shadow-sm"
                     >
                       <CopyIcon className="h-3.5 w-3.5 text-orange-700" />
                       <span>結果をコピー</span>
@@ -752,14 +757,20 @@ const PlantDiagnosisPage: React.FC<PageProps> = ({ handleApiCall, pageParams, se
               <div className="space-y-4 fade-in relative pt-4 animate-fadeIn">
                 <div className="flex items-center justify-between flex-wrap gap-2 px-1">
                   <span className="text-sm sm:text-base font-extrabold text-gray-955 dark:text-white">📄 AI雇用支援診断アドバイス結果</span>
-                  <button 
-                    onClick={handleCopy} 
-                    className="flex items-center gap-1.5 px-3 py-2 bg-orange-100 hover:bg-orange-200 dark:bg-gray-700 rounded-lg text-xs sm:text-sm font-extrabold text-orange-950 dark:text-orange-205 border-2 border-orange-300" 
-                    title="結果をコピー"
-                  >
-                    {isCopied ? <CheckIcon className="h-4 w-4 text-green-700 animate-bounce" /> : <CopyIcon className="h-4 w-4 text-orange-700" />}
-                    <span>{isCopied ? 'コピー完了' : '結果をクリップボードにコピー'}</span>
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {(() => {
+                      const speakText = `「${result.plantName}」のAI雇用支援診断アドバイス結果です。サポート推奨レベル・緊迫度は、${result.overallHealth}です。状況分析：${result.pestAndDisease.details}。合理的配慮に基づく具体的指示と工夫：${result.pestAndDisease.countermeasures}。農場長の心構えと言葉かけのコツ：${result.fertilizer.recommendation}。サポート強度：${result.watering.status}、対話のバランス：${result.watering.recommendation}。作業環境の物理的調整・配慮：${result.environment.recommendation}`;
+                      return <TextToSpeechButton content={speakText} size="sm" />;
+                    })()}
+                    <button 
+                      onClick={handleCopy} 
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 hover:bg-orange-200 dark:bg-gray-700 rounded-lg text-xs sm:text-sm font-extrabold text-orange-950 dark:text-orange-205 border-2 border-orange-300" 
+                      title="結果をコピー"
+                    >
+                      {isCopied ? <CheckIcon className="h-4 w-4 text-green-700 animate-bounce" /> : <CopyIcon className="h-4 w-4 text-orange-700" />}
+                      <span>{isCopied ? 'コピー完了' : 'コピー'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* 1. 相談タイトルと対象の課題 */}

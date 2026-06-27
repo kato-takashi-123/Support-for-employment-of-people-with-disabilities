@@ -179,6 +179,14 @@ export type AppSettings = {
   lastLegalUpdateCheck?: string;
   legalUpdateLog?: string;
   geminiModel?: 'gemini-3.5-flash' | 'gemini-3.1-flash-lite';
+  cprPdfUrl?: string;
+  cprVideoUrl?: string;
+  epilepsyPdfUrl?: string;
+  epilepsyVideoUrl?: string;
+  heatstrokePdfUrl?: string;
+  heatstrokeVideoUrl?: string;
+  stretcherPdfUrl?: string;
+  stretcherVideoUrl?: string;
 };
 
 export type ApiCallHandler = <T>(apiCall: () => Promise<T>) => Promise<T | undefined>;

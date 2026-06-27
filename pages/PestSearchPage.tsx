@@ -7,6 +7,7 @@ import { FormattedContent } from '../components/common/FormattedContent';
 import { ImageSourceModal } from '../components/modals';
 import { CameraIcon, MicrophoneIcon, CloseIcon, CopyIcon, CheckIcon, PestSearchIcon, ExternalLinkIcon } from '../components/Icons';
 import { ApiCallHandler } from '../types';
+import { TextToSpeechButton } from '../components/common/TextToSpeechButton';
 
 type PageProps = {
   handleApiCall: ApiCallHandler;
@@ -289,10 +290,18 @@ const PestSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
         {/* AI Result Card */}
         {result && (
           <div className="space-y-4 fade-in relative">
-            <button onClick={handleCopy} className="absolute top-0 right-0 z-10 p-2.5 bg-orange-100 dark:bg-gray-700 rounded-full hover:bg-orange-200 transition-colors" title="結果をコピー">
-                {isCopied ? <CheckIcon className="h-5 w-5 text-green-700" /> : <CopyIcon className="h-5 w-5 text-orange-700" />}
-            </button>
-            <h2 className="text-base sm:text-lg font-extrabold text-orange-950 dark:text-orange-200 border-b-2 border-orange-300 pb-1">{result.pestName}</h2>
+            {(() => {
+              const speakText = `「${result.pestName}」の解説です。概要：${result.summary.characteristics}。規定された根拠：${result.summary.causes}。推奨行動：${result.summary.countermeasures}。詳細：${result.details.characteristics}。不適切事例：${result.details.causes}。対策：${result.details.countermeasures}`;
+              return (
+                <div className="absolute top-0 right-0 z-10 flex items-center gap-2">
+                  <TextToSpeechButton content={speakText} size="sm" />
+                  <button onClick={handleCopy} className="p-2 bg-orange-100 dark:bg-gray-700 rounded-full hover:bg-orange-200 transition-colors border border-orange-200" title="結果をコピー">
+                    {isCopied ? <CheckIcon className="h-4 w-4 text-green-700" /> : <CopyIcon className="h-4 w-4 text-orange-700" />}
+                  </button>
+                </div>
+              );
+            })()}
+            <h2 className="text-base sm:text-lg font-extrabold text-orange-950 dark:text-orange-200 border-b-2 border-orange-300 pb-1 pr-36">{result.pestName}</h2>
             
             <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700 space-y-3">
               <h3 className="text-sm sm:text-base font-extrabold text-gray-950 dark:text-gray-100 mb-1 flex items-center gap-1.5">

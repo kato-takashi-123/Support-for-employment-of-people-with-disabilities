@@ -4,6 +4,7 @@ import { MicrophoneIcon, CopyIcon, CheckIcon, CloseIcon } from '../components/Ic
 import { ApiCallHandler, AppSettings } from '../types';
 import { searchGardeningTerm } from '../services/geminiService';
 import { FormattedContent } from '../components/common/FormattedContent';
+import { TextToSpeechButton } from '../components/common/TextToSpeechButton';
 
 type PageProps = {
   handleApiCall: ApiCallHandler;
@@ -159,14 +160,17 @@ const TermSearchPage: React.FC<PageProps> = ({ handleApiCall, settings }) => {
         
         {aiResult && (
           <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border-2 border-orange-200 dark:border-gray-700 fade-in space-y-4 relative">
-            <button 
-              onClick={handleCopy} 
-              className="absolute top-4 right-4 p-2.5 bg-orange-50 hover:bg-orange-100 dark:bg-gray-750 dark:hover:bg-gray-700 rounded-full transition-colors" 
-              title="結果をコピー"
-            >
-              {isCopied ? <CheckIcon className="h-5 w-5 text-green-700" /> : <CopyIcon className="h-5 w-5 text-orange-700" />}
-            </button>
-            <h2 className="text-base sm:text-lg font-extrabold text-orange-950 dark:text-orange-200 border-b-2 border-orange-200 pb-2 flex items-center gap-2 pr-12">
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <TextToSpeechButton content={aiResult} size="sm" />
+              <button 
+                onClick={handleCopy} 
+                className="p-2 bg-orange-50 hover:bg-orange-100 dark:bg-gray-750 dark:hover:bg-gray-700 rounded-full transition-colors border border-orange-100" 
+                title="結果をコピー"
+              >
+                {isCopied ? <CheckIcon className="h-4 w-4 text-green-700" /> : <CopyIcon className="h-4 w-4 text-orange-700" />}
+              </button>
+            </div>
+            <h2 className="text-base sm:text-lg font-extrabold text-orange-950 dark:text-orange-200 border-b-2 border-orange-200 pb-2 flex items-center gap-2 pr-36">
               <span>📚</span>
               <span>「{searchedTerm}」のAI解説</span>
             </h2>
